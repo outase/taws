@@ -1,0 +1,140 @@
+﻿<link rel="stylesheet" href="/css/menu.css">
+
+<h1>テスト</h1>
+
+<form id="executeTest" action="../taws/TestAction" method="post">
+    <div class="menu-padding-top-bottom-03">
+        <table class="menu-padding-bottom-02" cellpadding="10">
+            <tr>
+                <td>テストURL</td>
+                <td>
+                    <input type="text" name="testURL" size="100">
+                </td>
+            </tr>
+            <tr>
+                <td>テストケース</td>
+                <td>
+                    <select id="testCase" name="testCase" form="executeTest" onchange="EntryChange2()">
+                        <option value="000">テストデモ</option>
+                        <option value="001">テストケース①</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="file" id="testCaseFile" name="testCaseFile">
+                </td>
+            </tr>
+            <tr id="testTermsAria1">
+                <td><div id="testTerms1Title">テスト条件1</div></td>
+                <td>
+                    <select id="testTerms1" name="testTerms1" form="executeTest">
+                        <option value="000">条件なし</option>
+                        <option value="001">条件①</option>
+                    </select>
+                </td>
+                <td><div id="testTerms2Title">条件2</div></td>
+                <td>
+                    <select id="testTerms2" name="testTerms2" form="executeTest">
+                        <option value="000">条件なし</option>
+                        <option value="001">条件①</option>
+                    </select>
+                </td>
+                <td><div id="testTerms3Title">条件3</div></td>
+                <td>
+                    <select id="testTerms3" name="testTerms3" form="executeTest">
+                        <option value="000">条件なし</option>
+                        <option value="001">条件①</option>
+                    </select>
+                </td>
+                <td><div id="testTerms4Title">条件4</div></td>
+                <td>
+                    <select id="testTerms4" name="testTerms4" form="executeTest">
+                        <option value="000">条件なし</option>
+                        <option value="001">条件①</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>テストブラウザ</td>
+                <td>
+                    <select id="testBrowser" name="testBrowser" form="executeTest" onchange="EntryChange()">
+                        <option value="firefox">FireFox</option>
+                        <option value="chrome">Chrome</option>
+                        <option value="edge">Edge</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="testDeviceAria">
+                <td>デバイス</td>
+                <td>
+                    <select id="testDevice" name="testDevice" form="executeTest">
+                        <option value="pc">PC</option>
+                        <option value="sp_iphone">SmartPhone_iPhone</option>
+                        <option value="sp_android">SmartPhone_Android</option>
+                        <!--<option value="tab">Tablet</option>-->
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>スクリーンショットタイプ</td>
+                <td>
+                    <select name="screenShotType" form="executeTest">
+                        <option value="non">通常</option>
+                        <option value="full">フルスクリーン</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <select name="screenCloseFlg" form="executeTest">
+                        <option value="on">テスト完了時にブラウザを閉じる</option>
+                        <option value="off">テスト完了時にブラウザを閉じない</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="テスト実行"></td>
+            </tr>
+        </table>
+    </div>
+</form>
+
+<script type="text/javascript">
+    document.getElementById("testTermsAria1").style.display = "none";
+    document.getElementById("testTermsAria2").style.display = "none";
+
+    function EntryChange() {
+        testBrowser = document.getElementById("testBrowser");
+
+        if (testBrowser.value == "edge") {
+            document.getElementById("testDeviceAria").style.display = "none";
+	    }else{
+            document.getElementById("testDeviceAria").style.display = "";
+	    }
+    }
+
+    function EntryChange2() {
+        testBrowser = document.getElementById("testCase");
+
+        if (testBrowser.value == "001") {
+            document.getElementById("testTermsAria1").style.display = "none";
+            document.getElementById("testTermsAria2").style.display = "none";
+        } else {
+            document.getElementById("testTermsAria1").style.display = "";
+            document.getElementById("testTermsAria2").style.display = "";
+        }
+    }
+</script>
+
+<!--半角＠using (Html.BeginForm("Case001", "SingleLpTest")) {
+    <select name="testBrowser">
+        <option value="chrome">Chrome</option>
+        <option value="firefox">FireFox</option>
+        <option value="edge">Edge</option>
+    </select>
+    <input type="submit" value="実行">
+}-->

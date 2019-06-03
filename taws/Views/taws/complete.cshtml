@@ -1,0 +1,15 @@
+﻿<link rel="stylesheet" href="/css/menu.css">
+
+<h1>テストが完了しました</h1>
+
+<p class="menu-padding-top-bottom-01">@Model.resultMsg</p>
+
+<p class="menu-padding-bottom-01"><a href="../taws/Index">テストメニューに戻る</a></p>
+<!--<p class="menu-padding-bottom-01"><a href="/">メニューに戻る</a></p>-->
+
+@{ if (Model.resultErrorMsg != null)
+    {
+        <h3>ERROR</h3>
+        <p class="menu-padding-top-bottom-01">@Model.resultErrorMsg</p>
+    }
+}
