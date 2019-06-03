@@ -27,7 +27,18 @@ namespace tawsLibrary
             int fileNameNo = 0; //ファイル名No
 
             //テストケースの呼び出し
-            var testElemList = new TestCase01().TestElement(prop);
+            List<Dictionary<string, string>> testElemList = null;
+            if (prop.testCase == "000")
+            {
+                testElemList = new TestCase01().TestElement(prop);
+            }
+            else if (prop.testCase == "999")
+            {
+                testElemList = null;
+            }
+
+            //テスト結果格納
+            bool result = true;
 
             //テスト要素の実行
             foreach (Dictionary<string,string> tlist in testElemList)
@@ -35,7 +46,7 @@ namespace tawsLibrary
                 //スクリーンショットの取得、エビデンスのファイル名のNoをカウントアップ
                 if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist["elemNo"]))
                 {
-                    this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, fileNameNo.ToString("00"));
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, fileNameNo.ToString("00"));
                     fileNameNo++;
                 }
                 //csvの取得
@@ -46,8 +57,10 @@ namespace tawsLibrary
                 //その他画面要素の操作
                 else
                 {
-                    this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, tlist["elemName"], tlist["sendKey"]);
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, tlist["elemName"], tlist["sendKey"]);
                 }
+
+                if (!result) break;
             }
 
             if (prop.screenCloseFlg)
@@ -64,107 +77,100 @@ namespace tawsLibrary
             //実行前に少し待つ
             Thread.Sleep(500);
 
-            //スクリーンショット取得
-            if (elemNo == (int)EnumTestElem.getScreen)
+            try
             {
-                var scrOpt = new ScreenOprations();
-                scrOpt.GetScreenCommon<T>(driver, prop.evidenceSavePath, elemName, prop.testBrowser, prop.screenShotType);
-                result = true;
-            }
-            //sendkey id 主にテキストボックスなど
-            else if (elemNo == (int)EnumTestElem.Id_SendKey)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //スクリーンショット取得
+                if (elemNo == (int)EnumTestElem.getScreen)
                 {
-                    //driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
-                    driver.FindElementById(elemName).SendKeys(sendKey);
+                    var scrOpt = new ScreenOprations();
+                    scrOpt.GetScreenCommon<T>(driver, prop.evidenceSavePath, elemName, prop.testBrowser, prop.screenShotType);
                     result = true;
                 }
-            }
-            //sendkey id 主にセレクトボックスなど
-            else if (elemNo == (int)EnumTestElem.Id_SendKeyForSelectEtc)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //sendkey id 主にテキストボックスなど
+                else if (elemNo == (int)EnumTestElem.Id_SendKey)
                 {
-                    driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElementById(elemName).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //sendkey Name 主にテキストボックスなど
-            else if (elemNo == (int)EnumTestElem.Name_SendKey)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //sendkey id 主にセレクトボックスなど
+                else if (elemNo == (int)EnumTestElem.Id_SendKeyForSelectEtc)
                 {
-                    //driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
-                    driver.FindElementByName(elemName).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //sendkey Name 主にセレクトボックスなど
-            else if (elemNo == (int)EnumTestElem.Name_SendKeyForSelectEtc)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //sendkey Name 主にテキストボックスなど
+                else if (elemNo == (int)EnumTestElem.Name_SendKey)
                 {
-                    driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElementByName(elemName).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //クリック
-            else if (elemNo == (int)EnumTestElem.Id_Click)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //sendkey Name 主にセレクトボックスなど
+                else if (elemNo == (int)EnumTestElem.Name_SendKeyForSelectEtc)
                 {
-                    //driver.FindElement(By.Id(elemName)).Click();
-                    driver.FindElementById(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.Name_Click)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //クリック
+                else if (elemNo == (int)EnumTestElem.Id_Click)
                 {
-                    //driver.FindElement(By.Name(elemName)).Click();
-                    driver.FindElementByName(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElementById(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.ClassName_Click)
-            {
-                if (driver.FindElements(By.ClassName(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.Name_Click)
                 {
-                    //driver.FindElement(By.ClassName(elemName)).Click();
-                    driver.FindElementByClassName(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElementByName(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.XPath_Click)
-            {
-                if (driver.FindElements(By.XPath(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.ClassName_Click)
                 {
-                    //driver.FindElement(By.XPath(elemName)).Click();
-                    driver.FindElementByXPath(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.ClassName(elemName)).Count > 0)
+                    {
+                        driver.FindElementByClassName(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.LinkText_Click)
-            {
-                if (driver.FindElements(By.LinkText(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.XPath_Click)
                 {
-                    //driver.FindElement(By.LinkText(elemName)).Click();
-                    driver.FindElementByLinkText(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.XPath(elemName)).Count > 0)
+                    {
+                        driver.FindElementByXPath(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            //javascript実行
-            else if (elemNo == (int)EnumTestElem.Execute_Script)
-            {
-                try
+                else if (elemNo == (int)EnumTestElem.LinkText_Click)
+                {
+                    if (driver.FindElements(By.LinkText(elemName)).Count > 0)
+                    {
+                        driver.FindElementByLinkText(elemName).Click();
+                        result = true;
+                    }
+                }
+                //javascript実行
+                else if (elemNo == (int)EnumTestElem.Execute_Script)
                 {
                     driver.ExecuteScript(elemName);
                     result = true;
                 }
-                catch (Exception e) { prop.resultErrorMsg = e.ToString(); }
             }
+            catch (Exception e) { prop.resultErrorMsg = e.ToString(); }
 
             return result;
         }

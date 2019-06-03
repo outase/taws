@@ -20,6 +20,7 @@ namespace taws.Models
         public string screenShotType { get; set; }
         public string testUserAgent { get; set; }
         public bool screenCloseFlg { get; set; }
+        public HttpPostedFileWrapper testCaseFile { get; set; }
 
         //エビデンス出力先パス
         public string evidenceSavePath { get; set; }

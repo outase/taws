@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace tawsCommons.mvc
 {
@@ -20,6 +21,7 @@ namespace tawsCommons.mvc
         string screenShotType { get; set; }
         string testUserAgent { get; set; }
         bool screenCloseFlg { get; set; }
+        HttpPostedFileWrapper testCaseFile { get; set; }
 
         //エビデンス出力先パス
         string evidenceSavePath { get; set; }

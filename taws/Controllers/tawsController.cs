@@ -29,7 +29,7 @@ namespace taws.Controllers
             return View();
         }
 
-        public ActionResult TestAction(TestProperty prop, HttpPostedFileWrapper testCaseFile)
+        public ActionResult TestAction(TestProperty prop)
         {
            //var browerName = ConfigurationManager.AppSettings["BrowserName"];
             var browerName = prop.testBrowser;
@@ -41,7 +41,7 @@ namespace taws.Controllers
             var fileIo = new FileIo();
             prop.evidenceSavePath = fileIo.CreateEvidencesDirectory(testDateTime, prop);
             //テストケースファイル保存
-            var resutSaveFile = fileIo.SaveTestCaseFiles(prop, testDateTime, testCaseFile);
+            var resutSaveFile = fileIo.SaveTestCaseFiles(prop, testDateTime, prop.testCaseFile);
 
             //URL設定(configから)
             //var prop.testURL = $"{ConfigurationManager.AppSettings["Url"]}member";

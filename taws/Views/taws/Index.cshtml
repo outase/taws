@@ -15,12 +15,12 @@
                 <td>テストケース</td>
                 <td>
                     <select id="testCase" name="testCase" form="executeTest" onchange="EntryChange2()">
-                        <option value="000">テストデモ</option>
-                        <option value="001">テストケース①</option>
+                        <option value="000">デモテスト</option>
+                        <option value="999">ファイルから実行</option>
                     </select>
                 </td>
             </tr>
-            <tr>
+            <tr id="testFileUploadAria">
                 <td></td>
                 <td>
                     <input type="file" id="testCaseFile" name="testCaseFile">
@@ -90,8 +90,8 @@
                 <td></td>
                 <td>
                     <select name="screenCloseFlg" form="executeTest">
-                        <option value="on">テスト完了時にブラウザを閉じる</option>
-                        <option value="off">テスト完了時にブラウザを閉じない</option>
+                        <option value="true">テスト完了時にブラウザを閉じる</option>
+                        <option value="false">テスト完了時にブラウザを閉じない</option>
                     </select>
                 </td>
             </tr>
@@ -105,7 +105,7 @@
 
 <script type="text/javascript">
     document.getElementById("testTermsAria1").style.display = "none";
-    document.getElementById("testTermsAria2").style.display = "none";
+    document.getElementById("testFileUploadAria").style.display = "none";
 
     function EntryChange() {
         testBrowser = document.getElementById("testBrowser");
@@ -120,12 +120,14 @@
     function EntryChange2() {
         testBrowser = document.getElementById("testCase");
 
-        if (testBrowser.value == "001") {
+        if (testBrowser.value == "000") {
             document.getElementById("testTermsAria1").style.display = "none";
-            document.getElementById("testTermsAria2").style.display = "none";
+            document.getElementById("testFileUploadAria").style.display = "none";
+        } else if (testBrowser.value == "999") {
+            document.getElementById("testFileUploadAria").style.display = "";
         } else {
             document.getElementById("testTermsAria1").style.display = "";
-            document.getElementById("testTermsAria2").style.display = "";
+            document.getElementById("testFileUploadAria").style.display = "none";
         }
     }
 </script>
