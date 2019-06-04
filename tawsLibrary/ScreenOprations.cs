@@ -44,19 +44,20 @@ namespace tawsLibrary
         {
             Thread.Sleep(2000);
 
+            //フルスクリーンで取得
             if (mode == "full")
             {
                 try
                 {
                     this.GetFullScreen(driver, savePath, fileName + ".png");
                 }
-                //ブラウザによってJavascriptが動作しなかったときの対応
+                //ブラウザによってJavascriptが動作しなかったときの対応（通常で取得する）
                 catch
                 {
                     driver.GetScreenshot().SaveAsFile(savePath + fileName + ".png");
-
                 }
             }
+            //通常で取得
             else
             {
                 driver.GetScreenshot().SaveAsFile(savePath + fileName + ".png");
