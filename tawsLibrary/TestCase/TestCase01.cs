@@ -17,7 +17,7 @@ namespace tawsLibrary.TestCase
             List<Dictionary<string, string>> testElemList = new List<Dictionary<string, string>>();
 
             testElemList.Add(new Dictionary<string, string>() { { "elemNo", "1" }, { "elemName", "" }, { "sendKey", "" } } );
-            testElemList.Add(new Dictionary<string, string>() { { "elemNo", "101" }, { "elemName", "fakebox-input" }, { "sendKey", "ごはん" } });
+            testElemList.Add(new Dictionary<string, string>() { { "elemNo", "205" }, { "elemName", "その他の「ヘッドライン」" }, { "sendKey", "" } });
             testElemList.Add(new Dictionary<string, string>() { { "elemNo", "1" }, { "elemName", "" }, { "sendKey", "" } });
             //testElemList.Add(new Dictionary<string, string>() { { "elemNo", "401" }, { "elemName", "select * from user_t" }, { "sendKey", "user_t" } });
 

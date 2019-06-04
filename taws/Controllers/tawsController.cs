@@ -29,7 +29,7 @@ namespace taws.Controllers
             return View();
         }
 
-        public ActionResult TestAction(TestProperty prop, HttpPostedFileWrapper testCaseFile)
+        public ActionResult TestAction(TestProperty prop)
         {
            //var browerName = ConfigurationManager.AppSettings["BrowserName"];
             var browerName = prop.testBrowser;
@@ -41,10 +41,14 @@ namespace taws.Controllers
             var fileIo = new FileIo();
             prop.evidenceSavePath = fileIo.CreateEvidencesDirectory(testDateTime, prop);
             //テストケースファイル保存
-            var resutSaveFile = fileIo.SaveTestCaseFiles(prop, testDateTime, testCaseFile);
+            prop.uploadFileSavePath = fileIo.SaveTestCaseFiles(prop, testDateTime);
 
             //URL設定(configから)
             //var prop.testURL = $"{ConfigurationManager.AppSettings["Url"]}member";
+
+            //ウィンドウ表示位置設定
+            prop.positionX = 0;
+            prop.positionY = 0;
 
             //スクリーンサイズ取得
             if (prop.testDevice == "pc")
@@ -62,10 +66,6 @@ namespace taws.Controllers
                 prop.screenWidth = Convert.ToInt32(ConfigurationManager.AppSettings["BrowerWidthAndroid"]);
                 prop.screenHeight = Convert.ToInt32(ConfigurationManager.AppSettings["BrowerHeightAndroid"]);
             }
-
-            //ウィンドウ表示位置設定
-            prop.positionX = 0;
-            prop.positionY = 0;
 
 
             //テスト実施---------------------------------------

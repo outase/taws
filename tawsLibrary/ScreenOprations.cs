@@ -22,7 +22,7 @@ namespace tawsLibrary
 {
     public class ScreenOprations
     {
-        public void ReSize(IWebDriver driver, int reWidth, int reHeight)
+        public void ReSize(RemoteWebDriver driver, int reWidth, int reHeight)
         {
             var size = driver.Manage().Window.Size;
             size.Width = reWidth;
@@ -31,7 +31,7 @@ namespace tawsLibrary
             Thread.Sleep(2000);
         }
 
-        public void setPostion(IWebDriver driver, int x, int y)
+        public void setPostion(RemoteWebDriver driver, int x, int y)
         {
             var potion = driver.Manage().Window.Position;
             potion.X = x;
@@ -44,19 +44,20 @@ namespace tawsLibrary
         {
             Thread.Sleep(2000);
 
+            //フルスクリーンで取得
             if (mode == "full")
             {
                 try
                 {
                     this.GetFullScreen(driver, savePath, fileName + ".png");
                 }
-                //ブラウザによってJavascriptが動作しなかったときの対応
+                //ブラウザによってJavascriptが動作しなかったときの対応（通常で取得する）
                 catch
                 {
                     driver.GetScreenshot().SaveAsFile(savePath + fileName + ".png");
-
                 }
             }
+            //通常で取得
             else
             {
                 driver.GetScreenshot().SaveAsFile(savePath + fileName + ".png");

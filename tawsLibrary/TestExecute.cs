@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using System.Text;
 using Npgsql;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -12,6 +13,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using tawsCommons.mvc;
+using tawsLibrary;
 using tawsLibrary.TestCase;
 
 namespace tawsLibrary
@@ -23,19 +25,84 @@ namespace tawsLibrary
             //ブラウザを開く
             driver.Navigate().GoToUrl(prop.testURL);
 
+            //画面サイズ設定
+            var so = new ScreenOprations();
+            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
+
+            //テストケースの取得
+            List<Dictionary<string, string>> testElemList = null;
+            if (prop.testCase == "000")
+            {
+                testElemList = new TestCase01().TestElement(prop);
+            }
+            //CSVファイルから
+            else if (prop.testCase == "999")
+            {
+                testElemList = this.TestCaseFromUploadFile(prop);
+                //uploadしたファイルをフォルダごと削除
+                Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
+            }
+
+            //テストケースの実行
+            //このメソッドはDictionaryのListに格納したテストケースでテストを行う。
+            //件数が多くなった場合に遅くなることが懸念されるので、後々Dictonaryを用いない方法で新しいメソッドを作成する必要があると思われる。
+            this.ExeTestCase<T>(driver, prop, testElemList);
+
+            if (prop.screenCloseFlg)
+            {
+                //ブラウザを閉じる
+                driver.Close();
+            }
+        }
+
+        public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
+        {
+            var testElemList = new List<Dictionary<string, string>>();
+
+            var csvFilePath = prop.uploadFileSavePath + prop.testCaseFile.FileName;
+            StreamReader reader = new StreamReader(csvFilePath, Encoding.GetEncoding("Shift_JIS"));
+
+            reader.ReadLine(); //タイトルを読み飛ばす
+            while (reader.Peek() >= 0)
+            {
+                string[] cols = reader.ReadLine().Split(',');
+
+                // 項目分繰り返す
+                for (int i = 0; i < cols.Length; ++i)
+                {
+                    //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
+                    if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '"')
+                    {
+                        cols[i] = cols[i].Replace("\"", "");
+                    }
+                    //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
+                    else if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '\'')
+                    {
+                        cols[i] = cols[i].Replace("\'", "");
+                    }
+                }
+
+                //テストケースを格納する
+                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" } });
+            }
+            reader.Close();
+
+            return testElemList;
+        }
+
+        public void ExeTestCase<T>(T driver, ITestPropertyModelBase prop, List<Dictionary<string, string>> testElemList) where T : RemoteWebDriver
+        {
             var dbIo = new DataBaseIo();
             int fileNameNo = 0; //ファイル名No
-
-            //テストケースの呼び出し
-            var testElemList = new TestCase01().TestElement(prop);
+            bool result = true; //テスト結果格納
 
             //テスト要素の実行
-            foreach (Dictionary<string,string> tlist in testElemList)
+            foreach (Dictionary<string, string> tlist in testElemList)
             {
                 //スクリーンショットの取得、エビデンスのファイル名のNoをカウントアップ
                 if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist["elemNo"]))
                 {
-                    this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, fileNameNo.ToString("00"));
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, fileNameNo.ToString("00"));
                     fileNameNo++;
                 }
                 //csvの取得
@@ -46,14 +113,10 @@ namespace tawsLibrary
                 //その他画面要素の操作
                 else
                 {
-                    this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, tlist["elemName"], tlist["sendKey"]);
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, tlist["elemName"], tlist["sendKey"]);
                 }
-            }
 
-            if (prop.screenCloseFlg)
-            {
-                //ブラウザを閉じる
-                driver.Close();
+                if (!result) break;
             }
         }
 
@@ -64,107 +127,100 @@ namespace tawsLibrary
             //実行前に少し待つ
             Thread.Sleep(500);
 
-            //スクリーンショット取得
-            if (elemNo == (int)EnumTestElem.getScreen)
+            try
             {
-                var scrOpt = new ScreenOprations();
-                scrOpt.GetScreenCommon<T>(driver, prop.evidenceSavePath, elemName, prop.testBrowser, prop.screenShotType);
-                result = true;
-            }
-            //sendkey id 主にテキストボックスなど
-            else if (elemNo == (int)EnumTestElem.Id_SendKey)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //スクリーンショット取得
+                if (elemNo == (int)EnumTestElem.getScreen)
                 {
-                    //driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
-                    driver.FindElementById(elemName).SendKeys(sendKey);
+                    var scrOpt = new ScreenOprations();
+                    scrOpt.GetScreenCommon<T>(driver, prop.evidenceSavePath, elemName, prop.testBrowser, prop.screenShotType);
                     result = true;
                 }
-            }
-            //sendkey id 主にセレクトボックスなど
-            else if (elemNo == (int)EnumTestElem.Id_SendKeyForSelectEtc)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //sendkey id 主にテキストボックスなど
+                else if (elemNo == (int)EnumTestElem.Id_SendKey)
                 {
-                    driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElementById(elemName).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //sendkey Name 主にテキストボックスなど
-            else if (elemNo == (int)EnumTestElem.Name_SendKey)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //sendkey id 主にセレクトボックスなど
+                else if (elemNo == (int)EnumTestElem.Id_SendKeyForSelectEtc)
                 {
-                    //driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
-                    driver.FindElementByName(elemName).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElement(By.Id(elemName)).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //sendkey Name 主にセレクトボックスなど
-            else if (elemNo == (int)EnumTestElem.Name_SendKeyForSelectEtc)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //sendkey Name 主にテキストボックスなど
+                else if (elemNo == (int)EnumTestElem.Name_SendKey)
                 {
-                    driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElementByName(elemName).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            //クリック
-            else if (elemNo == (int)EnumTestElem.Id_Click)
-            {
-                if (driver.FindElements(By.Id(elemName)).Count > 0)
+                //sendkey Name 主にセレクトボックスなど
+                else if (elemNo == (int)EnumTestElem.Name_SendKeyForSelectEtc)
                 {
-                    //driver.FindElement(By.Id(elemName)).Click();
-                    driver.FindElementById(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElement(By.Name(elemName)).SendKeys(sendKey);
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.Name_Click)
-            {
-                if (driver.FindElements(By.Name(elemName)).Count > 0)
+                //クリック
+                else if (elemNo == (int)EnumTestElem.Id_Click)
                 {
-                    //driver.FindElement(By.Name(elemName)).Click();
-                    driver.FindElementByName(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Id(elemName)).Count > 0)
+                    {
+                        driver.FindElementById(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.ClassName_Click)
-            {
-                if (driver.FindElements(By.ClassName(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.Name_Click)
                 {
-                    //driver.FindElement(By.ClassName(elemName)).Click();
-                    driver.FindElementByClassName(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.Name(elemName)).Count > 0)
+                    {
+                        driver.FindElementByName(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.XPath_Click)
-            {
-                if (driver.FindElements(By.XPath(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.ClassName_Click)
                 {
-                    //driver.FindElement(By.XPath(elemName)).Click();
-                    driver.FindElementByXPath(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.ClassName(elemName)).Count > 0)
+                    {
+                        driver.FindElementByClassName(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            else if (elemNo == (int)EnumTestElem.LinkText_Click)
-            {
-                if (driver.FindElements(By.LinkText(elemName)).Count > 0)
+                else if (elemNo == (int)EnumTestElem.XPath_Click)
                 {
-                    //driver.FindElement(By.LinkText(elemName)).Click();
-                    driver.FindElementByLinkText(elemName).Click();
-                    result = true;
+                    if (driver.FindElements(By.XPath(elemName)).Count > 0)
+                    {
+                        driver.FindElementByXPath(elemName).Click();
+                        result = true;
+                    }
                 }
-            }
-            //javascript実行
-            else if (elemNo == (int)EnumTestElem.Execute_Script)
-            {
-                try
+                else if (elemNo == (int)EnumTestElem.LinkText_Click)
+                {
+                    if (driver.FindElements(By.LinkText(elemName)).Count > 0)
+                    {
+                        driver.FindElementByLinkText(elemName).Click();
+                        result = true;
+                    }
+                }
+                //javascript実行
+                else if (elemNo == (int)EnumTestElem.Execute_Script)
                 {
                     driver.ExecuteScript(elemName);
                     result = true;
                 }
-                catch (Exception e) { prop.resultErrorMsg = e.ToString(); }
             }
+            catch (Exception e) { prop.resultErrorMsg = e.ToString(); }
 
             return result;
         }
