@@ -25,6 +25,10 @@ namespace taws.Models
         //エビデンス出力先パス
         public string evidenceSavePath { get; set; }
 
+        //アップロードファイル保存先パス
+        public string uploadFileSavePath { get; set; }
+        public bool fileUploadResult { get; set; }
+
         //スクリーンサイズ
         public int screenWidth { get; set; }
         public int screenHeight { get; set; }

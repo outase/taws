@@ -26,6 +26,10 @@ namespace tawsCommons.mvc
         //エビデンス出力先パス
         string evidenceSavePath { get; set; }
 
+        //アップロードファイル保存先パス
+        string uploadFileSavePath { get; set; }
+        bool fileUploadResult { get; set; }
+
         //スクリーンサイズ
         int screenWidth { get; set; }
         int screenHeight { get; set; }

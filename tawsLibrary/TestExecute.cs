@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using System.Text;
 using Npgsql;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -12,6 +13,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using tawsCommons.mvc;
+using tawsLibrary;
 using tawsLibrary.TestCase;
 
 namespace tawsLibrary
@@ -32,9 +34,12 @@ namespace tawsLibrary
             {
                 testElemList = new TestCase01().TestElement(prop);
             }
+            //CSVファイルから
             else if (prop.testCase == "999")
             {
-                testElemList = null;
+                testElemList = this.TestCaseFromUploadFile(prop);
+                //uploadしたファイルをフォルダごと削除
+                Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
             }
 
             //テスト結果格納
@@ -68,6 +73,44 @@ namespace tawsLibrary
                 //ブラウザを閉じる
                 driver.Close();
             }
+        }
+
+        public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
+        {
+            var testElemList = new List<Dictionary<string, string>>();
+
+            var csvFilePath = prop.uploadFileSavePath + prop.testCaseFile.FileName;
+            StreamReader reader = new StreamReader(csvFilePath, Encoding.GetEncoding("Shift_JIS"));
+            reader.ReadLine(); //タイトルを読み飛ばす
+            while (reader.Peek() >= 0)
+            {
+                string[] cols = reader.ReadLine().Split(',');
+
+                // 配列からリストに格納する
+                List<string> lists = new List<string>();
+                lists.AddRange(cols);
+
+                // 項目分繰り返す
+                for (int i = 0; i < lists.Count; ++i)
+                {
+                    //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
+                    if (lists[i] != string.Empty && lists[i].TrimStart()[0] == '"')
+                    {
+                        lists[i] = lists[i].Replace("\"", "");
+                    }
+                    //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
+                    else if (lists[i] != string.Empty && lists[i].TrimStart()[0] == '\'')
+                    {
+                        lists[i] = lists[i].Replace("\'", "");
+                    }
+                }
+
+                //テストケースを格納する
+                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ lists[0] }" }, { "elemName", $"{ lists[1] }" }, { "sendKey", $"{ lists[2] }" } });
+            }
+            reader.Close();
+
+            return testElemList;
         }
 
         public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "") where T : RemoteWebDriver

@@ -25,9 +25,9 @@ namespace tawsLibrary
         }
 
         //テストケース保存
-        public bool SaveTestCaseFiles(ITestPropertyModelBase prop, string testDateTime, HttpPostedFileWrapper testCaseFile)
+        public string SaveTestCaseFiles(ITestPropertyModelBase prop, string testDateTime)
         {
-            if (testCaseFile != null)
+            if (prop.testCaseFile != null)
             {
                 var uploadFileSaveDir = $@"{ConfigurationManager.AppSettings["UploadFileRootPath"]}\{ testDateTime }";
                 var uploadFileSavePath = uploadFileSaveDir + @"\";
@@ -39,12 +39,12 @@ namespace tawsLibrary
                 }
 
                 //ファイル保存
-                testCaseFile.SaveAs(uploadFileSavePath + Path.GetFileName(testCaseFile.FileName));
+                prop.testCaseFile.SaveAs(uploadFileSavePath + Path.GetFileName(prop.testCaseFile.FileName));
 
-                return true;
+                return uploadFileSavePath;
             }
 
-            return false;
+            return null;
         }
     }
 }
