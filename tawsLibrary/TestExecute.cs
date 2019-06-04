@@ -25,10 +25,11 @@ namespace tawsLibrary
             //ブラウザを開く
             driver.Navigate().GoToUrl(prop.testURL);
 
-            var dbIo = new DataBaseIo();
-            int fileNameNo = 0; //ファイル名No
+            //画面サイズ設定
+            var so = new ScreenOprations();
+            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
 
-            //テストケースの呼び出し
+            //テストケースの取得
             List<Dictionary<string, string>> testElemList = null;
             if (prop.testCase == "000")
             {
@@ -42,11 +43,61 @@ namespace tawsLibrary
                 Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
             }
 
-            //テスト結果格納
-            bool result = true;
+            //テストケースの実行
+            //このメソッドはDictionaryのListに格納したテストケースでテストを行う。
+            //件数が多くなった場合に遅くなることが懸念されるので、後々Dictonaryを用いない方法で新しいメソッドを作成する必要があると思われる。
+            this.ExeTestCase<T>(driver, prop, testElemList);
+
+            if (prop.screenCloseFlg)
+            {
+                //ブラウザを閉じる
+                driver.Close();
+            }
+        }
+
+        public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
+        {
+            var testElemList = new List<Dictionary<string, string>>();
+
+            var csvFilePath = prop.uploadFileSavePath + prop.testCaseFile.FileName;
+            StreamReader reader = new StreamReader(csvFilePath, Encoding.GetEncoding("Shift_JIS"));
+
+            reader.ReadLine(); //タイトルを読み飛ばす
+            while (reader.Peek() >= 0)
+            {
+                string[] cols = reader.ReadLine().Split(',');
+
+                // 項目分繰り返す
+                for (int i = 0; i < cols.Length; ++i)
+                {
+                    //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
+                    if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '"')
+                    {
+                        cols[i] = cols[i].Replace("\"", "");
+                    }
+                    //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
+                    else if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '\'')
+                    {
+                        cols[i] = cols[i].Replace("\'", "");
+                    }
+                }
+
+                //テストケースを格納する
+                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" } });
+            }
+            reader.Close();
+
+            return testElemList;
+        }
+
+        public void ExeTestCase<T>(T driver, ITestPropertyModelBase prop, List<Dictionary<string, string>> testElemList) where T : RemoteWebDriver
+        {
+            var dbIo = new DataBaseIo();
+            int fileNameNo = 0; //ファイル名No
+            bool result = true; //テスト結果格納
 
             //テスト要素の実行
-            foreach (Dictionary<string,string> tlist in testElemList)
+            foreach (Dictionary<string, string> tlist in testElemList)
             {
                 //スクリーンショットの取得、エビデンスのファイル名のNoをカウントアップ
                 if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist["elemNo"]))
@@ -67,50 +118,6 @@ namespace tawsLibrary
 
                 if (!result) break;
             }
-
-            if (prop.screenCloseFlg)
-            {
-                //ブラウザを閉じる
-                driver.Close();
-            }
-        }
-
-        public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
-        {
-            var testElemList = new List<Dictionary<string, string>>();
-
-            var csvFilePath = prop.uploadFileSavePath + prop.testCaseFile.FileName;
-            StreamReader reader = new StreamReader(csvFilePath, Encoding.GetEncoding("Shift_JIS"));
-            reader.ReadLine(); //タイトルを読み飛ばす
-            while (reader.Peek() >= 0)
-            {
-                string[] cols = reader.ReadLine().Split(',');
-
-                // 配列からリストに格納する
-                List<string> lists = new List<string>();
-                lists.AddRange(cols);
-
-                // 項目分繰り返す
-                for (int i = 0; i < lists.Count; ++i)
-                {
-                    //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
-                    if (lists[i] != string.Empty && lists[i].TrimStart()[0] == '"')
-                    {
-                        lists[i] = lists[i].Replace("\"", "");
-                    }
-                    //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
-                    else if (lists[i] != string.Empty && lists[i].TrimStart()[0] == '\'')
-                    {
-                        lists[i] = lists[i].Replace("\'", "");
-                    }
-                }
-
-                //テストケースを格納する
-                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ lists[0] }" }, { "elemName", $"{ lists[1] }" }, { "sendKey", $"{ lists[2] }" } });
-            }
-            reader.Close();
-
-            return testElemList;
         }
 
         public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "") where T : RemoteWebDriver

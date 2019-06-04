@@ -46,6 +46,10 @@ namespace taws.Controllers
             //URL設定(configから)
             //var prop.testURL = $"{ConfigurationManager.AppSettings["Url"]}member";
 
+            //ウィンドウ表示位置設定
+            prop.positionX = 0;
+            prop.positionY = 0;
+
             //スクリーンサイズ取得
             if (prop.testDevice == "pc")
             {
@@ -62,10 +66,6 @@ namespace taws.Controllers
                 prop.screenWidth = Convert.ToInt32(ConfigurationManager.AppSettings["BrowerWidthAndroid"]);
                 prop.screenHeight = Convert.ToInt32(ConfigurationManager.AppSettings["BrowerHeightAndroid"]);
             }
-
-            //ウィンドウ表示位置設定
-            prop.positionX = 0;
-            prop.positionY = 0;
 
 
             //テスト実施---------------------------------------
