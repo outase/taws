@@ -30,22 +30,26 @@ namespace tawsLibrary
             so.ReSize(driver, prop.screenWidth, prop.screenHeight);
 
             //テストケースの取得
+            //カスタムテストケースから
             List<Dictionary<string, string>> testElemList = null;
             if (prop.testCase == "000")
             {
                 testElemList = new TestCase01().TestElement(prop);
             }
             //CSVファイルから
-            else if (prop.testCase == "999")
+            else if (prop.testCase == "901")
             {
                 testElemList = this.TestCaseFromUploadFile(prop);
                 //uploadしたファイルをフォルダごと削除
                 Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
             }
+            // データベースから
+            else if (prop.testCase == "902")
+            {
+
+            }
 
             //テストケースの実行
-            //このメソッドはDictionaryのListに格納したテストケースでテストを行う。
-            //件数が多くなった場合に遅くなることが懸念されるので、後々Dictonaryを用いない方法で新しいメソッドを作成する必要があると思われる。
             this.ExeTestCase<T>(driver, prop, testElemList);
 
             if (prop.screenCloseFlg)
