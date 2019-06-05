@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Text;
+using System.Text.RegularExpressions;
 using Npgsql;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -77,17 +78,17 @@ namespace tawsLibrary
                     //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
                     if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '"')
                     {
-                        cols[i] = cols[i].Replace("\"", "");
+                        cols[i] = cols[i].Replace("\"","").Trim();
                     }
                     //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
                     else if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '\'')
                     {
-                        cols[i] = cols[i].Replace("\'", "");
+                        cols[i] = cols[i].Replace("'", "").Trim();
                     }
                 }
 
                 //テストケースを格納する
-                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" } });
+                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" }, { "sleep", $"{ cols[3] }" } });
             }
             reader.Close();
 
@@ -124,12 +125,12 @@ namespace tawsLibrary
             }
         }
 
-        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "") where T : RemoteWebDriver
+        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "", int sleep = 500) where T : RemoteWebDriver
         {
             bool result = false;
 
             //実行前に少し待つ
-            Thread.Sleep(500);
+            Thread.Sleep(sleep);
 
             try
             {
