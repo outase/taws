@@ -40,7 +40,7 @@ namespace tawsLibrary
         //JavaScript実行
         Execute_Script = 301,
 
-        //JavaScript実行
+        //DataBaseからCSV出力
         Export_Csv = 401,
     }
 }

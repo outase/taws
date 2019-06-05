@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Text;
+using System.Text.RegularExpressions;
 using Npgsql;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -30,22 +31,26 @@ namespace tawsLibrary
             so.ReSize(driver, prop.screenWidth, prop.screenHeight);
 
             //テストケースの取得
+            //カスタムテストケースから
             List<Dictionary<string, string>> testElemList = null;
             if (prop.testCase == "000")
             {
                 testElemList = new TestCase01().TestElement(prop);
             }
             //CSVファイルから
-            else if (prop.testCase == "999")
+            else if (prop.testCase == "901")
             {
                 testElemList = this.TestCaseFromUploadFile(prop);
                 //uploadしたファイルをフォルダごと削除
                 Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
             }
+            // データベースから
+            else if (prop.testCase == "902")
+            {
+
+            }
 
             //テストケースの実行
-            //このメソッドはDictionaryのListに格納したテストケースでテストを行う。
-            //件数が多くなった場合に遅くなることが懸念されるので、後々Dictonaryを用いない方法で新しいメソッドを作成する必要があると思われる。
             this.ExeTestCase<T>(driver, prop, testElemList);
 
             if (prop.screenCloseFlg)
@@ -73,17 +78,17 @@ namespace tawsLibrary
                     //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
                     if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '"')
                     {
-                        cols[i] = cols[i].Replace("\"", "");
+                        cols[i] = cols[i].Replace("\"","").Trim();
                     }
                     //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
                     else if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '\'')
                     {
-                        cols[i] = cols[i].Replace("\'", "");
+                        cols[i] = cols[i].Replace("'", "").Trim();
                     }
                 }
 
                 //テストケースを格納する
-                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" } });
+                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" }, { "sleep", $"{ cols[3] }" } });
             }
             reader.Close();
 
@@ -120,12 +125,12 @@ namespace tawsLibrary
             }
         }
 
-        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "") where T : RemoteWebDriver
+        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "", int sleep = 500) where T : RemoteWebDriver
         {
             bool result = false;
 
             //実行前に少し待つ
-            Thread.Sleep(500);
+            Thread.Sleep(sleep);
 
             try
             {
