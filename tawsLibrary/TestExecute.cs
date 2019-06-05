@@ -23,13 +23,6 @@ namespace tawsLibrary
     {
         public virtual void ExeTest<T>(T driver, ITestPropertyModelBase prop) where T : RemoteWebDriver
         {
-            //ブラウザを開く
-            driver.Navigate().GoToUrl(prop.testURL);
-
-            //画面サイズ設定
-            var so = new ScreenOprations();
-            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
-
             //テストケースの取得
             //カスタムテストケースから
             List<Dictionary<string, string>> testElemList = null;
@@ -49,6 +42,13 @@ namespace tawsLibrary
             {
 
             }
+
+            //ブラウザを開く
+            driver.Navigate().GoToUrl(prop.testURL);
+
+            //画面サイズ設定
+            var so = new ScreenOprations();
+            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
 
             //テストケースの実行
             this.ExeTestCase<T>(driver, prop, testElemList);
