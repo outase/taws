@@ -6,16 +6,11 @@
     <div class="menu-padding-top-bottom-03">
         <table class="menu-padding-bottom-02" cellpadding="10">
             <tr>
-                <td>テストURL</td>
-                <td>
-                    <input type="text" name="testURL" size="100">
-                </td>
-            </tr>
-            <tr>
                 <td>テストケース</td>
                 <td>
                     <select id="testCase" name="testCase" form="executeTest" onchange="EntryChange2()">
-                        <option value="000">デモテスト</option>
+                        <option value="000">選択してください</option>
+                        <option value="801">デモテスト</option>
                         <option value="901">ファイルから実行</option>
                         <option value="902">データベースから実行</option>
                     </select>
@@ -25,6 +20,12 @@
                 <td></td>
                 <td>
                     <input type="file" id="testCaseFile" name="testCaseFile">
+                </td>
+            </tr>
+            <tr>
+                <td>テストURL</td>
+                <td>
+                    <input type="text" id="testURL" name="testURL" size="50" required>
                 </td>
             </tr>
             <tr id="testTermsAria1">
@@ -121,19 +122,31 @@
     function EntryChange2() {
         testBrowser = document.getElementById("testCase");
 
-        if (testBrowser.value == "000") {
+        //デモテストの場合
+        if (testBrowser.value == "801") {
             document.getElementById("testTermsAria1").style.display = "none";
             document.getElementById("testFileUploadAria").style.display = "none";
+            document.getElementById("testURL").value = "https://news.google.com/?hl=ja&gl=JP&ceid=JP:ja";
+        //ファイルアップロードの場合
         } else if (testBrowser.value == "901") {
+            document.getElementById("testTermsAria1").style.display = "none";
             document.getElementById("testFileUploadAria").style.display = "";
-        } else {
+            //document.getElementById("testURL").value = "";
+        //データベースから実行の場合
+        } else if (testBrowser.value == "902") {
+            document.getElementById("testTermsAria1").style.display = "none";
+            document.getElementById("testFileUploadAria").style.display = "none";
+            //document.getElementById("testURL").value = "";
+        //カスタムテストケースの場合
+        }else {
             document.getElementById("testTermsAria1").style.display = "";
             document.getElementById("testFileUploadAria").style.display = "none";
+            //document.getElementById("testURL").value = "";
         }
     }
 </script>
 
-<!--半角＠using (Html.BeginForm("Case001", "SingleLpTest")) {
+<!--半角＠using (Html.BeginForm("Case001", "LpTest")) {
     <select name="testBrowser">
         <option value="chrome">Chrome</option>
         <option value="firefox">FireFox</option>
