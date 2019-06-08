@@ -14,10 +14,10 @@ namespace tawsCommons
 {
     public class FireFoxTestCommons
     {
-        //FireFox SSL警告対応(こちらの理由で導入保留：profileがアクセス拒否で読み込み不可、自己証明書の受け入れ設定がバグで動作せず）start
+        //FireFox SSL警告対応(こちらの理由で導入保留：profileがアクセス拒否で読み込み不可、自己証明書の受け入れ設定がバグで動作せず）
         public virtual FirefoxDriver SetAcceptUntrustedCertificates(FirefoxOptions option, string mode = null)
         {
-            var profileDir = @"C:\Users\IVP\Documents\temp\dldra74p.default-1529030201451";
+            var profileDir = ConfigurationManager.AppSettings["ProfileDir"];
             FirefoxDriver driver = null;
 
             using (var fs = new FileStream(profileDir, FileMode.Open, FileAccess.Read))

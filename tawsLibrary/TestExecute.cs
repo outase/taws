@@ -33,7 +33,7 @@ namespace tawsLibrary
             //テストケースの取得
             //カスタムテストケースから
             List<Dictionary<string, string>> testElemList = null;
-            if (prop.testCase == "000")
+            if (prop.testCase == "801")
             {
                 testElemList = new TestCase01().TestElement(prop);
             }
@@ -41,8 +41,6 @@ namespace tawsLibrary
             else if (prop.testCase == "901")
             {
                 testElemList = this.TestCaseFromUploadFile(prop);
-                //uploadしたファイルをフォルダごと削除
-                Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true); 
             }
             // データベースから
             else if (prop.testCase == "902")
@@ -96,6 +94,9 @@ namespace tawsLibrary
                 testElemList.Add(new Dictionary<string, string>() { { ELEM_NO, $"{ cols[0] }" }, { ELEM_NAME, $"{ cols[1] }" }, { SEND_KEY, $"{ cols[2] }" }, { SLEEP_TIME, $"{ cols[3] }" } });
             }
             reader.Close();
+
+            //uploadしたファイルをフォルダごと削除
+            Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true);
 
             return testElemList;
         }
@@ -236,8 +237,14 @@ namespace tawsLibrary
                     driver.ExecuteScript(elemName);
                     result = true;
                 }
+
+                //テストが失敗していた場合
+                if (!result)
+                {
+                    prop.resultErrorMsg = $"テスト要素 \"{ elemNo }\", \"{ elemName }\", \"{ sendKey }\" が実行できませんでした。テスト要素を見直してください。";
+                }
             }
-            catch (Exception e) { prop.resultErrorMsg = e.ToString(); }
+            catch(Exception e) { prop.resultErrorMsg = $"テスト要素 \"{ elemNo }\", \"{ elemName }\", \"{ sendKey }\" が実行できませんでした。テスト要素を見直してください。詳しいエラー：{ e.ToString() }"; }
 
             return result;
         }

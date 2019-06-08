@@ -3,6 +3,8 @@ CREATE TABLE test_case_t
   id serial NOT NULL,
   test_case_no character varying(10) NOT NULL,
   name character varying(100) NOT NULL,
+　test_url text,
+  description text,
   create_at timestamp with time zone NOT NULL DEFAULT now(),
   update_at timestamp with time zone,
   CONSTRAINT test_case_t_pkey PRIMARY KEY (id)
@@ -14,6 +16,8 @@ WITH (
 COMMENT ON COLUMN test_case_t.id IS 'CHK_TYPE_Numeric';
 COMMENT ON COLUMN test_case_t.test_case_no IS 'range to 10 CHK_TYPE_NumericString';
 COMMENT ON COLUMN test_case_t.name IS 'CHK_TYPE_All';
+COMMENT ON COLUMN test_case_t.test_url IS 'CHK_TYPE_All';
+COMMENT ON COLUMN test_case_t.description IS 'CHK_TYPE_APP';
 COMMENT ON COLUMN test_case_t.create_at IS 'CHK_TYPE_Datetime';
 COMMENT ON COLUMN test_case_t.update_at IS 'CHK_TYPE_Datetime';
 
