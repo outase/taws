@@ -60,6 +60,11 @@ namespace tawsLibrary
             }
         }
 
+        public const string ELEM_NO = "elem_no";
+        public const string ELEM_NAME = "elem_name";
+        public const string SEND_KEY = "send_key";
+        public const string SLEEP_TIME = "sleep_time";
+
         public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
         {
             var testElemList = new List<Dictionary<string, string>>();
@@ -88,7 +93,7 @@ namespace tawsLibrary
                 }
 
                 //テストケースを格納する
-                testElemList.Add(new Dictionary<string, string>() { { "elemNo", $"{ cols[0] }" }, { "elemName", $"{ cols[1] }" }, { "sendKey", $"{ cols[2] }" }, { "sleep", $"{ cols[3] }" } });
+                testElemList.Add(new Dictionary<string, string>() { { ELEM_NO, $"{ cols[0] }" }, { ELEM_NAME, $"{ cols[1] }" }, { SEND_KEY, $"{ cols[2] }" }, { SLEEP_TIME, $"{ cols[3] }" } });
             }
             reader.Close();
 
@@ -105,32 +110,39 @@ namespace tawsLibrary
             foreach (Dictionary<string, string> tlist in testElemList)
             {
                 //スクリーンショットの取得、エビデンスのファイル名のNoをカウントアップ
-                if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist["elemNo"]))
+                if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist[ELEM_NO]))
                 {
-                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, fileNameNo.ToString("00"));
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[ELEM_NO]), prop, fileNameNo.ToString("00"), "", tlist[SLEEP_TIME]);
                     fileNameNo++;
                 }
                 //csvの取得
-                else if ((int)EnumTestElem.Export_Csv == Convert.ToInt32(tlist["elemNo"]))
+                else if ((int)EnumTestElem.Export_Csv == Convert.ToInt32(tlist[ELEM_NO]))
                 {
-                    dbIo.ExportCsv2(prop.evidenceSavePath, fileNameNo.ToString("00"), tlist["elemName"], tlist["sendKey"]);
+                    dbIo.ExportCsv2(prop.evidenceSavePath, fileNameNo.ToString("00"), tlist[ELEM_NAME], tlist[SEND_KEY]);
                 }
                 //その他画面要素の操作
                 else
                 {
-                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist["elemNo"]), prop, tlist["elemName"], tlist["sendKey"]);
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[ELEM_NO]), prop, tlist[ELEM_NAME], tlist[SEND_KEY], tlist[SLEEP_TIME]);
                 }
 
                 if (!result) break;
             }
         }
 
-        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "", int sleep = 500) where T : RemoteWebDriver
+        public bool TestElementExecution<T>(T driver, int elemNo, ITestPropertyModelBase prop, string elemName, string sendKey = "", string sleep = "") where T : RemoteWebDriver
         {
             bool result = false;
 
             //実行前に少し待つ
-            Thread.Sleep(sleep);
+            if(sleep == "")
+            {
+                Thread.Sleep(500);
+            }
+            else
+            {
+                Thread.Sleep(Convert.ToInt32(sleep));
+            }
 
             try
             {
