@@ -28,6 +28,7 @@ CREATE TABLE test_case_detail_t
   elem_no character varying(5) NOT NULL,
   elem_name character varying(1000) NOT NULL,
   sendkey character varying(100) NOT NULL,
+  sleep_time integer NOT NULL,
   create_at timestamp with time zone NOT NULL DEFAULT now(),
   update_at timestamp with time zone,
   CONSTRAINT test_case_detail_t_pkey PRIMARY KEY (id)
@@ -41,6 +42,7 @@ COMMENT ON COLUMN test_case_detail_t.test_case_no IS 'range to 10 CHK_TYPE_Numer
 COMMENT ON COLUMN test_case_detail_t.elem_no IS 'CHK_TYPE_All';
 COMMENT ON COLUMN test_case_detail_t.elem_name IS 'CHK_TYPE_All';
 COMMENT ON COLUMN test_case_detail_t.sendkey IS 'CHK_TYPE_All';
+COMMENT ON COLUMN test_case_detail_t.sleep_time IS 'CHK_TYPE_Integer';
 COMMENT ON COLUMN test_case_detail_t.create_at IS 'CHK_TYPE_Datetime';
 COMMENT ON COLUMN test_case_detail_t.update_at IS 'CHK_TYPE_Datetime';
 

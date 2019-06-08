@@ -16,10 +16,10 @@ namespace tawsLibrary.TestCase
         {
             List<Dictionary<string, string>> testElemList = new List<Dictionary<string, string>>();
 
-            testElemList.Add(new Dictionary<string, string>() { { "elemNo", "1" }, { "elemName", "" }, { "sendKey", "" } } );
-            testElemList.Add(new Dictionary<string, string>() { { "elemNo", "205" }, { "elemName", "その他の「ヘッドライン」" }, { "sendKey", "" } });
-            testElemList.Add(new Dictionary<string, string>() { { "elemNo", "1" }, { "elemName", "" }, { "sendKey", "" } });
-            //testElemList.Add(new Dictionary<string, string>() { { "elemNo", "401" }, { "elemName", "select * from user_t" }, { "sendKey", "user_t" } });
+            testElemList.Add(new Dictionary<string, string>() { { "elem_no", "1" }, { "elem_name", "" }, { "send_key", "" }, { "sleep_time", "" } } );
+            testElemList.Add(new Dictionary<string, string>() { { "elem_no", "205" }, { "elem_name", "その他の「ヘッドライン」" }, { "send_key", "" }, { "sleep_time", "" } });
+            testElemList.Add(new Dictionary<string, string>() { { "elem_no", "1" }, { "elem_name", "" }, { "send_key", "" }, { "sleep_time", "2000" } });
+            //testElemList.Add(new Dictionary<string, string>() { { "elem_no", "401" }, { "elem_name", "select * from user_t" }, { "send_key", "user_t" }, { "sleep_time", "" } });
 
             return testElemList;
         }
