@@ -22,6 +22,9 @@ namespace taws.Models
         public bool screenCloseFlg { get; set; }
         public HttpPostedFileWrapper testCaseFile { get; set; }
 
+        //テスト実施日時
+        public string testDateTime { get; set; }
+
         //エビデンス出力先パス
         public string evidenceSavePath { get; set; }
 
