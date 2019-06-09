@@ -145,9 +145,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\tawsController.cs" />
+    <Compile Include="Controllers\TestCaseController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\TestCase.cs" />
     <Compile Include="Models\TestProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -205,6 +207,8 @@
     <Content Include="Views\taws\complete.cshtml" />
     <Content Include="Views\taws\Index.cshtml" />
     <Content Include="Settings.config" />
+    <Content Include="Views\TestCase\Insert.cshtml" />
+    <Content Include="Views\TestCase\Insert2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

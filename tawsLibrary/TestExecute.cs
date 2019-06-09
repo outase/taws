@@ -40,7 +40,7 @@ namespace tawsLibrary
             //CSVファイルから
             else if (prop.testCase == "901")
             {
-                testElemList = this.TestCaseFromUploadFile(prop);
+                testElemList = new FileIo().TestCaseFromUploadFile(prop.uploadFileSavePath, prop.testCaseFile);
             }
             // データベースから
             else if (prop.testCase == "902")
@@ -58,49 +58,6 @@ namespace tawsLibrary
             }
         }
 
-        public const string ELEM_NO = "elem_no";
-        public const string ELEM_NAME = "elem_name";
-        public const string SEND_KEY = "send_key";
-        public const string SLEEP_TIME = "sleep_time";
-
-        public List<Dictionary<string, string>> TestCaseFromUploadFile(ITestPropertyModelBase prop)
-        {
-            var testElemList = new List<Dictionary<string, string>>();
-
-            var csvFilePath = prop.uploadFileSavePath + prop.testCaseFile.FileName;
-            StreamReader reader = new StreamReader(csvFilePath, Encoding.GetEncoding("Shift_JIS"));
-
-            reader.ReadLine(); //タイトルを読み飛ばす
-            while (reader.Peek() >= 0)
-            {
-                string[] cols = reader.ReadLine().Split(',');
-
-                // 項目分繰り返す
-                for (int i = 0; i < cols.Length; ++i)
-                {
-                    //先頭のスペースを除去して、(")ダブルクォーテーションが入っていないか判定する
-                    if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '"')
-                    {
-                        cols[i] = cols[i].Replace("\"","").Trim();
-                    }
-                    //先頭のスペースを除去して、(')クォーテーションが入っていないか判定する
-                    else if (cols[i] != string.Empty && cols[i].TrimStart()[0] == '\'')
-                    {
-                        cols[i] = cols[i].Replace("'", "").Trim();
-                    }
-                }
-
-                //テストケースを格納する
-                testElemList.Add(new Dictionary<string, string>() { { ELEM_NO, $"{ cols[0] }" }, { ELEM_NAME, $"{ cols[1] }" }, { SEND_KEY, $"{ cols[2] }" }, { SLEEP_TIME, $"{ cols[3] }" } });
-            }
-            reader.Close();
-
-            //uploadしたファイルをフォルダごと削除
-            Directory.Delete(prop.uploadFileSavePath.Substring(0, prop.uploadFileSavePath.Length - 1), true);
-
-            return testElemList;
-        }
-
         public void ExeTestCase<T>(T driver, ITestPropertyModelBase prop, List<Dictionary<string, string>> testElemList) where T : RemoteWebDriver
         {
             var dbIo = new DataBaseIo();
@@ -111,20 +68,20 @@ namespace tawsLibrary
             foreach (Dictionary<string, string> tlist in testElemList)
             {
                 //スクリーンショットの取得、エビデンスのファイル名のNoをカウントアップ
-                if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist[ELEM_NO]))
+                if ((int)EnumTestElem.getScreen == Convert.ToInt32(tlist[FileIo.ELEM_NO]))
                 {
-                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[ELEM_NO]), prop, fileNameNo.ToString("00"), "", tlist[SLEEP_TIME]);
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[FileIo.ELEM_NO]), prop, fileNameNo.ToString("00"), "", tlist[FileIo.SLEEP_TIME]);
                     fileNameNo++;
                 }
                 //csvの取得
-                else if ((int)EnumTestElem.Export_Csv == Convert.ToInt32(tlist[ELEM_NO]))
+                else if ((int)EnumTestElem.Export_Csv == Convert.ToInt32(tlist[FileIo.ELEM_NO]))
                 {
-                    dbIo.ExportCsv2(prop.evidenceSavePath, fileNameNo.ToString("00"), tlist[ELEM_NAME], tlist[SEND_KEY]);
+                    dbIo.ExportCsv2(prop.evidenceSavePath, fileNameNo.ToString("00"), tlist[FileIo.ELEM_NAME], tlist[FileIo.SEND_KEY]);
                 }
                 //その他画面要素の操作
                 else
                 {
-                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[ELEM_NO]), prop, tlist[ELEM_NAME], tlist[SEND_KEY], tlist[SLEEP_TIME]);
+                    result = this.TestElementExecution(driver, Convert.ToInt32(tlist[FileIo.ELEM_NO]), prop, tlist[FileIo.ELEM_NAME], tlist[FileIo.SEND_KEY], tlist[FileIo.SLEEP_TIME]);
                 }
 
                 if (!result) break;

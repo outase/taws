@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,11 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Transactions;
 using Npgsql;
+using tawsCommons.mvc;
 
 namespace tawsLibrary
 {
-    class DataBaseIo
+    public class DataBaseIo
     {
         //別サーバーにDBがあるときは、COPYコマンドでEXPORTできないので、localhostのみ利用可能
         public void ExportCsv(string savePath, string fileName, string exportSql)
@@ -110,7 +112,28 @@ namespace tawsLibrary
             }
         }
 
-        public string ExecutSQL(string savePath, string fileName, string executSql)
+        public int ExeSql(string query)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int result = 0;
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (SqlConnection sqlCon = new System.Data.SqlClient.SqlConnection(connectionString))
+                {
+                    sqlCon.Open();
+
+                    SqlCommand comm = new SqlCommand(query, sqlCon);
+                    result = comm.ExecuteNonQuery();
+
+                    sqlCon.Close();
+                }
+            }
+
+            return result;
+        }
+
+        public string ExeSqlUseNpgsql(string savePath, string fileName, string executSql)
         {
 
             var csvPath = savePath + fileName + ".csv";

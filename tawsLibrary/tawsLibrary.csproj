@@ -78,6 +78,7 @@
     <Compile Include="FileIo.cs" />
     <Compile Include="FireFoxTestLibrary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestCaseFactory.cs" />
     <Compile Include="ScreenOprations.cs" />
     <Compile Include="TestCase\ITestCase.cs" />
     <Compile Include="TestCase\TestCase01.cs" />

@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "テストケース新規追加";
+}
+
+<h2>テストケース新規追加</h2>
+
+工番・プロジェクトNoとテストケース名とテストURLを入力してから、新規追加するテストケースファイルを選択してください。
+※工番・プロジェクトNoは10桁まで入力できます。テストケースを工程コードなどを含ませて管理することも検討ください。
+
+<form id="insertTestCase" action="../TestCase/Insert2" method="post" enctype="multipart/form-data">
+    <div class="menu-padding-top-bottom-03">
+        <table class="menu-padding-bottom-02" cellpadding="10">
+            <tr>
+                <td>工番・プロジェクトNo</td>
+                <td>
+                    <input type="text" id="projectNo" name="projectNo" size="30" maxlength="10" pattern="^[0-9A-Za-z]+$" required>
+                </td>
+            </tr>
+            <tr>
+                <td>テストケース名</td>
+                <td>
+                    <input type="text" id="testCaseName" name="testCaseName" size="50" maxlength="100" required>
+                </td>
+            </tr>
+            <tr>
+                <td>テストURL</td>
+                <td>
+                    <input type="text" id="testUrl" name="testUrl" size="50" required>
+                </td>
+            </tr>
+            <tr id="testFileUploadAria">
+                <td>テストケース</td>
+                <td>
+                    <input type="file" id="testCaseFile" name="testCaseFile">
+                </td>
+            </tr>
+            <tr>
+                <td>説明</td>
+                <td>
+                    <textarea id="testDescription" name="testDescription" size="50" rows="5" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="新規追加"></td>
+            </tr>
+        </table>
+    </div>
+</form>
+
