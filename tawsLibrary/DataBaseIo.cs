@@ -133,6 +133,30 @@ namespace tawsLibrary
             return result;
         }
 
+        public int[] ExeSql2(string queryHeader, string queryDetail)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int[] result = new int[2];
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (SqlConnection sqlCon = new System.Data.SqlClient.SqlConnection(connectionString))
+                {
+                    sqlCon.Open();
+
+                    SqlCommand comm = new SqlCommand(queryHeader, sqlCon);
+                    result[0] = comm.ExecuteNonQuery();
+
+                    SqlCommand comm2 = new SqlCommand(queryDetail, sqlCon);
+                    result[1] = comm2.ExecuteNonQuery();
+
+                    sqlCon.Close();
+                }
+            }
+
+            return result;
+        }
+
         public string ExeSqlUseNpgsql(string savePath, string fileName, string executSql)
         {
 

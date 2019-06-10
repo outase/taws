@@ -43,10 +43,15 @@ namespace tawsLibrary
             //最後の不要な","を削除してセミコロンで閉じる
             insTestCaseDetail = insTestCaseDetail.Substring(0, insTestCaseDetail.Length - 1) + ";";
 
-            dbIo.ExeSql(insTestCase);
-            dbIo.ExeSql(insTestCaseDetail);
+            //データベースにINSERTする
+            int[] result = dbIo.ExeSql2(insTestCase, insTestCaseDetail);
 
-            return "";
+            if (result[0] == 0 || result[1] == 0)
+            {
+                return $"テストケースのINSERTに失敗しました。test_case_t:{ result[0] } test_case_detail_t：{ result[1] }";
+            }
+
+            return $"テストケースのINSERTが完了しました。test_case_t:{ result[0] } test_case_detail_t：{ result[1] }";
         }
     }
 }
