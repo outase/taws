@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using tawsLibrary;
 using tawsCommons.mvc;
 
@@ -17,16 +21,23 @@ namespace tawsLibrary
             //test_case_tのインサート文作成
             string insTestCase = "INSERT INTO test_case_t(test_case_no, name, test_url, description) VALUES ";
 
-            int testCaseCount = dbIo.ExeSql("");
+            //すでに登録済みのprojectNoのテストケース件数を取得
+            int projectCount = dbIo.ExeSql($"SELECT COUNT(*) FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
 
-            insTestCase += $"('{ testCase.projectNo }', '{ testCase.testCaseName }', '{ testCase.testURL }', '{ testCase.testDescription }');";
+            //新しい連番を取得
+            string newSerial = (projectCount + 1).ToString($"D{ ConfigurationManager.AppSettings["ProjectNoCountDigits"] }");
+            string newTestCaseNo = $"{ testCase.projectNo }-{ newSerial }";
+
+            //インサートするレコード作成
+            insTestCase += $"('{ newTestCaseNo }', '{ testCase.testCaseName }', '{ testCase.testURL }', '{ testCase.testDescription }');";
 
             //test_case_detail_tのインサート文作成
             string insTestCaseDetail = "INSERT INTO test_case_detail_t(test_case_no, elem_no, elem_name, sendkey, sleep_time) VALUES ";
 
+            //インサートするレコード作成
             foreach (Dictionary<string, string> tlist in testCase.testElemList)
             {
-                insTestCaseDetail += $"('','{ tlist[FileIo.ELEM_NO] }', '{ tlist[FileIo.ELEM_NAME] }', '{ tlist[FileIo.SEND_KEY] }', '{ tlist[FileIo.SLEEP_TIME] }'),";
+                insTestCaseDetail += $"('{ newTestCaseNo }','{ tlist[FileIo.ELEM_NO] }', '{ tlist[FileIo.ELEM_NAME] }', '{ tlist[FileIo.SEND_KEY] }', '{ tlist[FileIo.SLEEP_TIME] }'),";
             }
 
             //最後の不要な","を削除してセミコロンで閉じる
@@ -36,11 +47,6 @@ namespace tawsLibrary
             dbIo.ExeSql(insTestCaseDetail);
 
             return "";
-        }
-
-        public int TestCaseCountWithTestCaseNo(string testCaseNo)
-        {
-            return 0;
         }
     }
 }
