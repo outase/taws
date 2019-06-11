@@ -157,11 +157,8 @@ namespace tawsLibrary
             return result;
         }
 
-        public string ExeSqlUseNpgsql(string savePath, string fileName, string executSql)
+        public int ExeSqlUseNpgsql(string query)
         {
-
-            var csvPath = savePath + fileName + ".csv";
-
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             int result = 0;
 
@@ -170,16 +167,39 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    NpgsqlCommand command = new NpgsqlCommand(executSql, conn);
-                    //SQLの実行と実行結果の格納
-                    result = command.ExecuteNonQuery();
+
+                    NpgsqlCommand comm = new NpgsqlCommand(query, conn);
+                    result = comm.ExecuteNonQuery();
+
                     conn.Close();
                 }
-
-                ts.Complete();
             }
 
-            return Convert.ToString(result) + "件";
+            return result;
+        }
+
+        public int[] ExeSql2UseNpgsql(string queryHeader, string queryDetail)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int[] result = new int[2];
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    NpgsqlCommand comm = new NpgsqlCommand(queryHeader, conn);
+                    result[0] = comm.ExecuteNonQuery();
+
+                    NpgsqlCommand comm2 = new NpgsqlCommand(queryDetail, conn);
+                    result[1] = comm2.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -34,10 +34,10 @@ namespace taws.Controllers
             testCase.testElemList = new FileIo().TestCaseFromUploadFile(uploadFileSavePath, testCase.testCaseFile);
 
             //DataBaseにInsertする
-            var tcFac = new TestCaseFactory();
-            var insTestCase = tcFac.insertTestCase(testCase);
+            var testCaseFac = new TestCaseFactory();
+            testCase.resultMsg = testCaseFac.insertTestCase(testCase);
 
-            return View();
+            return View("complete", testCase);
         }
     }
 }

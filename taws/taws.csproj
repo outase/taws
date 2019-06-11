@@ -208,7 +208,7 @@
     <Content Include="Views\taws\Index.cshtml" />
     <Content Include="Settings.config" />
     <Content Include="Views\TestCase\Insert.cshtml" />
-    <Content Include="Views\TestCase\Insert2.cshtml" />
+    <Content Include="Views\TestCase\complete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
