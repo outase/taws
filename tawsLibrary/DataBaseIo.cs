@@ -16,7 +16,10 @@ namespace tawsLibrary
 {
     public class DataBaseIo
     {
-        //別サーバーにDBがあるときは、COPYコマンドでEXPORTできないので、localhostのみ利用可能
+        /// <summary>
+        /// CSV出力用
+        /// ※別サーバーにDBがあるときは、COPYコマンドでEXPORTできないので、ExportCsv2を利用のこと
+        /// </summary>
         public void ExportCsv(string savePath, string fileName, string exportSql)
         {
             var csvPath = savePath + fileName + ".csv";
@@ -39,7 +42,11 @@ namespace tawsLibrary
             }
         }
 
-        //別サーバーにDBがあってもEXPORT可能
+        ///<summary>
+        ///CSV出力用
+        ///別サーバーにDBがあってもEXPORT可能
+        ///※ただし、テーブル結合の場合のタイトル出力には未対応
+        ///</summary>
         public void ExportCsv2(string savePath, string fileName, string exportSql, string exportTable = null)
         {
             var csvPath = savePath + fileName + ".csv";
@@ -112,6 +119,11 @@ namespace tawsLibrary
             }
         }
 
+        /// <summary>
+        /// 単一のクエリの実行
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public int ExeSql(string query)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -128,11 +140,19 @@ namespace tawsLibrary
 
                     sqlCon.Close();
                 }
+
+                ts.Complete();
             }
 
             return result;
         }
 
+        /// <summary>
+        /// 売上伝票ヘッダと明細のようにセットで同一トランザクション内で実行する場合に利用
+        /// </summary>
+        /// <param name="queryHeader"></param>
+        /// <param name="queryDetail"></param>
+        /// <returns></returns>
         public int[] ExeSql2(string queryHeader, string queryDetail)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -152,11 +172,22 @@ namespace tawsLibrary
 
                     sqlCon.Close();
                 }
+
+                //どちらかが更新が０件の場合は失敗とみなしてコンプリートさせない
+                if (result[0] > 0 && result[0] > 0)
+                {
+                    ts.Complete();
+                }
             }
 
             return result;
         }
 
+        /// <summary>
+        /// 単一のクエリの実行
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public int ExeSqlUseNpgsql(string query)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -173,15 +204,23 @@ namespace tawsLibrary
 
                     conn.Close();
                 }
+
+                ts.Complete();
             }
 
             return result;
         }
 
+        /// <summary>
+        /// 売上伝票ヘッダと明細のようにセットで同一トランザクション内で実行する場合に利用
+        /// </summary>
+        /// <param name="queryHeader"></param>
+        /// <param name="queryDetail"></param>
+        /// <returns></returns>
         public int[] ExeSql2UseNpgsql(string queryHeader, string queryDetail)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
-            int[] result = new int[2];
+            int[] result = new int[2] {0, 0};
 
             using (TransactionScope ts = new TransactionScope())
             {
@@ -197,6 +236,42 @@ namespace tawsLibrary
 
                     conn.Close();
                 }
+
+                //どちらかが更新が０件の場合は失敗とみなしてコンプリートさせない
+                if(result[0] > 0 && result[0] > 0)
+                {
+                    ts.Complete();
+                }
+            }
+
+            return result;
+        }
+
+
+        ///<summary>
+        ///複数のクエリを同一トランザクション内で処理したい場合に利用(用途に合わせてロールバックさせる処理の追加が必要）
+        ///</summary>
+        public virtual List<int> ExeSql3UseNpgsql(string[] query)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            var result = new List<int>();
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    foreach(string s in query)
+                    {
+                        NpgsqlCommand comm = new NpgsqlCommand(s, conn);
+                        result.Add(comm.ExecuteNonQuery());
+                    }
+
+                    conn.Close();
+                }
+
+                ts.Complete();
             }
 
             return result;
