@@ -20,7 +20,7 @@ namespace taws.Controllers
             return View();
         }
 
-        public ActionResult Insert2(TestCase testCase)
+        public ActionResult Insert2(TestCaseProperty testCase)
         {
             var fileIo = new FileIo();
 

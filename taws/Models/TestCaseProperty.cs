@@ -6,7 +6,7 @@ using tawsCommons.mvc;
 
 namespace taws.Models
 {
-    public class TestCase : ITestCaseModelBase
+    public class TestCaseProperty : ITestCasePropertyModelBase
     {
         public string projectNo { get; set; }
         public string testCaseName { get; set; }

@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace tawsCommons.mvc
 {
-    public interface ITestCaseModelBase
+    public interface ITestCaseDatailModelBase
     {
         int id { get; set; }
-        int delete { get; set; }
         string test_case_no { get; set; }
-        string name { get; set; }
-        string test_url { get; set; }
-        string description { get; set; }
+        string execute_order { get; set; }
+        string elem_no { get; set; }
+        string elem_name { get; set; }
+        string sendkey { get; set; }
+        string sleep_time { get; set; }
         DateTime create_at { get; set; }
         DateTime update_at { get; set; }
     }

@@ -149,7 +149,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\TestCase.cs" />
+    <Compile Include="Models\TestCaseProperty.cs" />
     <Compile Include="Models\TestProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
