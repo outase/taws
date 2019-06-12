@@ -52,7 +52,7 @@ namespace tawsLibrary
             var csvPath = savePath + fileName + ".csv";
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
 
-            string csvTitle = null;
+            string csvTitle = "";
             string exportTitle = $@"SELECT column_name FROM information_schema.columns WHERE table_name = '{ exportTable }' ORDER BY ordinal_position;";
 
             //出力前にスリープ
@@ -122,64 +122,24 @@ namespace tawsLibrary
         /// <summary>
         /// 単一のクエリの実行
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="conn">new 'Sql or Npgsql or MySql etc'Connection(connectionString)</param>
+        /// <param name="comm">new 'Sql or Npgsql or MySql etc'Command(query, conn);</param>
+        /// <remarks>IDbConnectionを継承したオブジェクトと、IDbCommandを継承したオブジェクトを受取り処理を実行する</remarks>
         /// <returns></returns>
-        public int ExeSql(string query)
+        public int ExeDml<Conn, Comm>(Conn conn, Comm comm) where Conn : IDbConnection where Comm : IDbCommand
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             int result = 0;
 
             using (TransactionScope ts = new TransactionScope())
             {
-                using (SqlConnection sqlCon = new System.Data.SqlClient.SqlConnection(connectionString))
+                using (conn)
                 {
-                    sqlCon.Open();
-
-                    SqlCommand comm = new SqlCommand(query, sqlCon);
+                    conn.Open();
                     result = comm.ExecuteNonQuery();
-
-                    sqlCon.Close();
+                    conn.Close();
                 }
-
                 ts.Complete();
             }
-
-            return result;
-        }
-
-        /// <summary>
-        /// 売上伝票ヘッダと明細のようにセットで同一トランザクション内で実行する場合に利用
-        /// </summary>
-        /// <param name="queryHeader"></param>
-        /// <param name="queryDetail"></param>
-        /// <returns></returns>
-        public int[] ExeSql2(string queryHeader, string queryDetail)
-        {
-            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
-            int[] result = new int[2];
-
-            using (TransactionScope ts = new TransactionScope())
-            {
-                using (SqlConnection sqlCon = new System.Data.SqlClient.SqlConnection(connectionString))
-                {
-                    sqlCon.Open();
-
-                    SqlCommand comm = new SqlCommand(queryHeader, sqlCon);
-                    result[0] = comm.ExecuteNonQuery();
-
-                    SqlCommand comm2 = new SqlCommand(queryDetail, sqlCon);
-                    result[1] = comm2.ExecuteNonQuery();
-
-                    sqlCon.Close();
-                }
-
-                //どちらかが更新が０件の場合は失敗とみなしてコンプリートさせない
-                if (result[0] > 0 && result[0] > 0)
-                {
-                    ts.Complete();
-                }
-            }
-
             return result;
         }
 
@@ -188,7 +148,7 @@ namespace tawsLibrary
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public int ExeSqlUseNpgsql(string query)
+        public int ExeDml(string query)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             int result = 0;
@@ -198,16 +158,12 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-
                     NpgsqlCommand comm = new NpgsqlCommand(query, conn);
                     result = comm.ExecuteNonQuery();
-
                     conn.Close();
                 }
-
                 ts.Complete();
             }
-
             return result;
         }
 
@@ -217,7 +173,7 @@ namespace tawsLibrary
         /// <param name="queryHeader"></param>
         /// <param name="queryDetail"></param>
         /// <returns></returns>
-        public int[] ExeSql2UseNpgsql(string queryHeader, string queryDetail)
+        public int[] ExeDml2(string queryHeader, string queryDetail)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             int[] result = new int[2] {0, 0};
@@ -243,7 +199,6 @@ namespace tawsLibrary
                     ts.Complete();
                 }
             }
-
             return result;
         }
 
@@ -251,7 +206,7 @@ namespace tawsLibrary
         ///<summary>
         ///複数のクエリを同一トランザクション内で処理したい場合に利用(用途に合わせてロールバックさせる処理の追加が必要）
         ///</summary>
-        public virtual List<int> ExeSql3UseNpgsql(string[] query)
+        public virtual List<int> ExeDml3(string[] query)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             var result = new List<int>();
@@ -261,19 +216,46 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-
                     foreach(string s in query)
                     {
                         NpgsqlCommand comm = new NpgsqlCommand(s, conn);
                         result.Add(comm.ExecuteNonQuery());
                     }
-
                     conn.Close();
                 }
-
                 ts.Complete();
             }
+            return result;
+        }
 
+        /// <summary>
+        /// 読み取り用クエリ実行
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public int ExeRecodeCount(string query)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int result = 0;
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+                    NpgsqlCommand comm = new NpgsqlCommand(query, conn);
+                    var rd = comm.ExecuteReader();
+
+                    if (rd.HasRows)
+                    {
+                        while (rd.Read())
+                        {
+                            result = Convert.ToInt32(rd[0]);
+                        }
+                    }
+                    conn.Close();
+                }
+            }
             return result;
         }
     }
