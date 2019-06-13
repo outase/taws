@@ -244,63 +244,33 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    NpgsqlCommand comm = new NpgsqlCommand(query, conn);
-                    var rd = comm.ExecuteReader();
-
-                    if (rd.HasRows)
-                    {
-                        while (rd.Read())
-                        {
-                            result = Convert.ToInt32(rd[0]);
-                        }
-                    }
-                    conn.Close();
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// 読み取り用クエリ実行
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public int ExeReader<T>(string query) where T : class, new()
-        {
-            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
-            int result = 0;
-
-            using (TransactionScope ts = new TransactionScope())
-            {
-                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
-
                     var comm = new NpgsqlCommand(query, conn);
                     using (var da = new NpgsqlDataAdapter(comm))
                     {
                         var dt = new DataTable();
                         da.Fill(dt);
 
+                        //レコード数取得
+                        result = dt.Rows.Count;
 
-                        var dictionary = dt.AsEnumerable().ToDictionary(
-                            row => row["test_case_no"],
-                            row => row["name"]
-                            );
+                        ////レコード取得できる
+                        //var i = 0;
+                        //DataRow[] list = new DataRow[dt.Rows.Count];
+                        //foreach (DataRow row in dt.Rows)
+                        //{
+                        //    list[i] = row;
+                        //    i++;
 
-
-                        DataRow[] list = new DataRow[dt.Rows.Count];
-                        var i = 0;
-
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            list[i] = row;
-                            i++;
-                        }
-                        result = list.Length;
+                        //    ////レコード内の１つ１つの要素を取得できる
+                        //    //var j = 0;
+                        //    //foreach(var item in row.ItemArray)
+                        //    //{
+                        //    //    j++;
+                        //    //}
+                        //}
                     }
                     conn.Close();
-                } 
+                }
             }
             return result;
         }

@@ -22,9 +22,7 @@ namespace tawsLibrary
             //Create ヘッダ
 
             //すでに登録済みのprojectNoのテストケース件数を取得
-            int projectCount = dbIo.ExeRecodeCount($"SELECT COUNT(*) FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
-
-            dbIo.ExeReader<TestCaseModel>($"SELECT * FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
+            int projectCount = dbIo.ExeRecodeCount($"SELECT * FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
 
             //新しい連番を取得
             string newSerial = (projectCount + 1).ToString($"D{ ConfigurationManager.AppSettings["ProjectNoCountDigits"] }");
@@ -43,7 +41,7 @@ namespace tawsLibrary
 
             //インサートするレコード作成
             int index = 1;
-            foreach (Dictionary<string, string> tlist in testCase.testElemList)
+            foreach (var tlist in testCase.testElemList)
             {
                 insTestCaseDetail += $@"('{ newTestCaseNo }', 
                                         '{ index.ToString("00000") }', 
