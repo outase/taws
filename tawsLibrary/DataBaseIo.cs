@@ -11,6 +11,7 @@ using System.Threading;
 using System.Transactions;
 using Npgsql;
 using tawsCommons.mvc;
+using tawsLibrary.mvc;
 
 namespace tawsLibrary
 {
@@ -229,7 +230,7 @@ namespace tawsLibrary
         }
 
         /// <summary>
-        /// 読み取り用クエリ実行
+        /// 読み取り用クエリ実行（カウント用）
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
@@ -255,6 +256,51 @@ namespace tawsLibrary
                     }
                     conn.Close();
                 }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 読み取り用クエリ実行
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public int ExeReader<T>(string query) where T : class, new()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int result = 0;
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    var comm = new NpgsqlCommand(query, conn);
+                    using (var da = new NpgsqlDataAdapter(comm))
+                    {
+                        var dt = new DataTable();
+                        da.Fill(dt);
+
+
+                        var dictionary = dt.AsEnumerable().ToDictionary(
+                            row => row["test_case_no"],
+                            row => row["name"]
+                            );
+
+
+                        DataRow[] list = new DataRow[dt.Rows.Count];
+                        var i = 0;
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            list[i] = row;
+                            i++;
+                        }
+                        result = list.Length;
+                    }
+                    conn.Close();
+                } 
             }
             return result;
         }

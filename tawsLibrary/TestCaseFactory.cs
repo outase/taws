@@ -24,6 +24,8 @@ namespace tawsLibrary
             //すでに登録済みのprojectNoのテストケース件数を取得
             int projectCount = dbIo.ExeRecodeCount($"SELECT COUNT(*) FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
 
+            dbIo.ExeReader<TestCaseModel>($"SELECT * FROM test_case_t WHERE test_case_no like '{ testCase.projectNo }%';");
+
             //新しい連番を取得
             string newSerial = (projectCount + 1).ToString($"D{ ConfigurationManager.AppSettings["ProjectNoCountDigits"] }");
             string newTestCaseNo = $"{ testCase.projectNo }-{ newSerial }";
