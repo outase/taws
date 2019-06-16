@@ -49,11 +49,11 @@ namespace taws.Controllers
             var browerName = prop.testBrowser;
 
             //テスト実施日時取得
-            string testDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            prop.testDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
             //エビデンス用ディレクトリ作成
             var fileIo = new FileIo();
-            prop.evidenceSavePath = fileIo.CreateEvidencesDirectory(testDateTime, prop);
+            prop.evidenceSavePath = fileIo.CreateEvidencesDirectory(prop);
             //テストケースファイル保存
             prop.uploadFileSavePath = fileIo.SaveTestCaseFiles(prop.testCaseFile, testDateTime);
 

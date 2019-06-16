@@ -26,6 +26,9 @@ namespace tawsCommons.mvc
 
         string selectTestCaseNo { get; set; }
 
+        //テスト実施日時
+        string testDateTime { get; set; }
+
         //エビデンス出力先パス
         string evidenceSavePath { get; set; }
 

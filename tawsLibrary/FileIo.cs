@@ -12,9 +12,9 @@ namespace tawsLibrary
     public class FileIo
     {
         //エビデンス用のディレクトリ作成
-        public string CreateEvidencesDirectory(string testDateTime, ITestPropertyModelBase prop)
+        public string CreateEvidencesDirectory(ITestPropertyModelBase prop)
         {
-            var evidenceSaveDir = $@"{ConfigurationManager.AppSettings["SaveFileRootPath"]}{ prop.testBrowser }_{ prop.testDevice }_{ testDateTime }";
+            var evidenceSaveDir = $@"{ConfigurationManager.AppSettings["SaveFileRootPath"]}{ prop.testBrowser }_{ prop.testDevice }_{ prop.testDateTime }";
             var evidenceSavePath = evidenceSaveDir + @"\";
 
             if (!Directory.Exists(evidenceSaveDir))
@@ -26,11 +26,11 @@ namespace tawsLibrary
         }
 
         //テストケース保存
-        public string SaveTestCaseFiles(HttpPostedFileWrapper testCaseFile, string testDateTime)
+        public string SaveTestCaseFiles(ITestPropertyModelBase prop)
         {
             if (testCaseFile != null)
             {
-                var uploadFileSaveDir = $@"{ConfigurationManager.AppSettings["UploadFileRootPath"]}\{ testDateTime }";
+                var uploadFileSaveDir = $@"{ConfigurationManager.AppSettings["UploadFileRootPath"]}\{ prop.testDateTime }";
                 var uploadFileSavePath = uploadFileSaveDir + @"\";
 
                 //ディレクトリ作成
