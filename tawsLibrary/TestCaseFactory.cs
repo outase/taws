@@ -65,21 +65,5 @@ namespace tawsLibrary
 
             return $"テストケースのINSERTが完了しました。Test case table Add：{ result[0] }件 Test case detail table Add：{ result[1] }件";
         }
-
-/*        public void test()
-        {
-            var conf = new NHibernate.Cfg.Configuration();
-            conf.AddAssembly("test_case_t");
-            var fact = conf.BuildSessionFactory();
-            var sess = fact.OpenSession();
-
-            var crite = sess.CreateCriteria(typeof(TestCaseDetailModel));
-            crite.Add(Expression.Like("test_case_no", "demo%"));
-            crite.AddOrder(Order.Desc("excute_order"));
-
-            var testCaseDetailList = crite.List();
-
-            sess.Close();
-        }*/
     }
 }

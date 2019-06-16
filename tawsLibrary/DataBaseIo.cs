@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using Dapper;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -234,6 +235,36 @@ namespace tawsLibrary
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
+        public List<T> ExeReader<T>(string query) where T : class
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            var resutList = new List<T>();
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    //Use Dapper
+                    var list = conn.Query<T>(query);
+
+                    foreach (dynamic item in list)
+                    {
+                        resutList.Add(item);
+                    }
+
+                    conn.Close();
+                }
+            }
+            return resutList;
+        }
+
+        /// <summary>
+        /// 読み取り用クエリ実行（カウント用）
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public int ExeRecodeCount(string query)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -244,13 +275,15 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
+
+                    //try DataAdpter
                     var comm = new NpgsqlCommand(query, conn);
                     using (var da = new NpgsqlDataAdapter(comm))
                     {
                         var dt = new DataTable();
                         da.Fill(dt);
 
-                        //レコード数取得
+                        //レコード件数取得
                         result = dt.Rows.Count;
 
                         ////レコード取得できる
@@ -265,14 +298,30 @@ namespace tawsLibrary
                         //    //var j = 0;
                         //    //foreach(var item in row.ItemArray)
                         //    //{
+                        //    //    //Listにitemを格納する
                         //    //    j++;
                         //    //}
                         //}
                     }
+
                     conn.Close();
                 }
             }
             return result;
+        }
+
+        public List<Dictionary<string, string>> TestCaseFromDB(string testCaseNo)
+        {
+            var testElemList = new List<Dictionary<string, string>>();
+            List<TestCaseDetailModel> testCaseDetailList = new DataBaseIo().ExeReader<TestCaseDetailModel>($@"select * from test_case_detail_t where test_case_no = '{ testCaseNo }'");
+
+            foreach (var list in testCaseDetailList)
+            {
+                //テストケースを格納する
+                testElemList.Add(new Dictionary<string, string>() { { FileIo.ELEM_NO, $"{ list.elem_no }" }, { FileIo.ELEM_NAME, $"{ list.elem_name }" }, { FileIo.SEND_KEY, $"{ list.sendkey }" }, { FileIo.SLEEP_TIME, $"{ list.sleep_time }" } });
+            }
+
+            return testElemList;
         }
     }
 }

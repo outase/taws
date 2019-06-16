@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using taws.Models;
 using tawsCommons.mvc;
 
 namespace taws.Models
@@ -22,6 +23,11 @@ namespace taws.Models
         public bool screenCloseFlg { get; set; }
         public HttpPostedFileWrapper testCaseFile { get; set; }
 
+        //テストケースの一覧表示
+        public List<TestCase> testCaseList { get; set; }
+
+        public string selectTestCaseNo { get; set; }
+
         //エビデンス出力先パス
         public string evidenceSavePath { get; set; }
 
@@ -40,5 +46,8 @@ namespace taws.Models
         //テスト結果
         public string resultMsg { get; set; }
         public string resultErrorMsg { get; set; }
+
+        //Validation error メッセージ
+        public List<string> validationMsg { get; set; } = new List<string>();
     }
 }

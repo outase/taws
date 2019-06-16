@@ -15,6 +15,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using tawsCommons.mvc;
 using tawsLibrary;
+using tawsLibrary.mvc;
 using tawsLibrary.TestCase;
 
 namespace tawsLibrary
@@ -23,13 +24,6 @@ namespace tawsLibrary
     {
         public virtual void ExeTest<T>(T driver, ITestPropertyModelBase prop) where T : RemoteWebDriver
         {
-            //ブラウザを開く
-            driver.Navigate().GoToUrl(prop.testURL);
-
-            //画面サイズ設定
-            var so = new ScreenOprations();
-            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
-
             //テストケースの取得
             //カスタムテストケースから
             List<Dictionary<string, string>> testElemList = null;
@@ -45,8 +39,18 @@ namespace tawsLibrary
             // データベースから
             else if (prop.testCase == "902")
             {
-
+                var dbIo = new DataBaseIo();
+                testElemList = dbIo.TestCaseFromDB(prop.selectTestCaseNo);
+                List<TestCaseModel> testCaseList = dbIo.ExeReader<TestCaseModel>($@"select * from test_case_t where test_case_no = '{ prop.selectTestCaseNo }'");
+                prop.testURL = testCaseList[0].test_url;
             }
+
+            //ブラウザを開く
+            driver.Navigate().GoToUrl(prop.testURL);
+
+            //画面サイズ設定
+            var so = new ScreenOprations();
+            so.ReSize(driver, prop.screenWidth, prop.screenHeight);
 
             //テストケースの実行
             this.ExeTestCase<T>(driver, prop, testElemList);

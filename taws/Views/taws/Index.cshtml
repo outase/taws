@@ -2,6 +2,16 @@
 
 <h1>テスト</h1>
 
+@if (@Model.validationMsg.Count != 0)
+{
+    <p class="alert alert-danger">入力エラー</p>
+    foreach (var msgList in @Model.validationMsg)
+    {
+        <p class="alert alert-danger">@msgList</p>
+    }
+}
+
+
 <form id="executeTest" action="../taws/TestAction" method="post" enctype="multipart/form-data">
     <div class="menu-padding-top-bottom-03">
         <table class="menu-padding-bottom-02" cellpadding="10">
@@ -25,14 +35,29 @@
             <tr id="testCaseFromDataBaseAria">
                 <td></td>
                 <td>
-                    まだテストケースはありません。新しくテストケースをデータベースに追加してください。
-                    <a href="../TestCase/Insert">新規追加</a>
+                    @if (@Model.testCaseList.Count == 0)
+                    {
+                        <p>
+                            まだテストケースはありません。新しくテストケースをデータベースに追加してください。
+                            新規追加は<a href="../TestCase/Insert">こちら</a>
+                        </p>
+                    }
+                    else
+                    {
+                        <select id="selectTestCaseNo" name="selectTestCaseNo" form="executeTest">
+                            @foreach (var tcList in @Model.testCaseList)
+                            {
+                                <option value="@tcList.test_case_no">@tcList.test_case_no @tcList.name @tcList.description @tcList.test_url</option>
+                            }
+                        </select>
+                        <p>新しいテストケースを登録する場合は<a href="../TestCase/Insert">こちら</a></p>
+                    }
                 </td>
             </tr>
-            <tr>
+            <tr id="testUrlAria">
                 <td>テストURL</td>
                 <td>
-                    <input type="text" id="testURL" name="testURL" size="50" required>
+                    <input type="text" id="testURL" name="testURL" size="50">
                 </td>
             </tr>
             <tr id="testTermsAria1">
@@ -122,9 +147,9 @@
 
         if (testBrowser.value == "edge") {
             document.getElementById("testDeviceAria").style.display = "none";
-	    }else{
+        } else {
             document.getElementById("testDeviceAria").style.display = "";
-	    }
+        }
     }
 
     function EntryChange2() {
@@ -135,27 +160,32 @@
             document.getElementById("testTermsAria1").style.display = "none";
             document.getElementById("testFileUploadAria").style.display = "none";
             document.getElementById("testCaseFromDataBaseAria").style.display = "none";
+            document.getElementById("testUrlAria").style.display = "";
             document.getElementById("testURL").value = "https://news.google.com/?hl=ja&gl=JP&ceid=JP:ja";
-        //ファイルアップロードの場合
+            //ファイルアップロードの場合
         } else if (testBrowser.value == "901") {
             document.getElementById("testTermsAria1").style.display = "none";
             document.getElementById("testFileUploadAria").style.display = "";
             document.getElementById("testCaseFromDataBaseAria").style.display = "none";
+            document.getElementById("testUrlAria").style.display = "";
             //document.getElementById("testURL").value = "";
-        //データベースから実行の場合
+            //データベースから実行の場合
         } else if (testBrowser.value == "902") {
             document.getElementById("testTermsAria1").style.display = "none";
             document.getElementById("testFileUploadAria").style.display = "none";
             document.getElementById("testCaseFromDataBaseAria").style.display = "";
+            document.getElementById("testUrlAria").style.display = "none";
             //document.getElementById("testURL").value = "";
-        //カスタムテストケースの場合
-        }else {
+            //カスタムテストケースの場合
+        } else {
             document.getElementById("testTermsAria1").style.display = "";
             document.getElementById("testFileUploadAria").style.display = "none";
             document.getElementById("testCaseFromDataBaseAria").style.display = "none";
+            document.getElementById("testUrlAria").style.display = "";
             //document.getElementById("testURL").value = "";
         }
     }
+
 </script>
 
 <!--半角＠using (Html.BeginForm("Case001", "LpTest")) {

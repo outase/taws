@@ -17,6 +17,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.IE;
 using Npgsql;
 using taws.Models;
+using taws.Validate;
 using tawsCommons;
 using tawsLibrary;
 
@@ -24,14 +25,27 @@ namespace taws.Controllers
 {
     public class tawsController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(TestProperty prop)
         {
-            return View();
+            //データベースからテストケースを取得
+            prop.testCaseList = new DataBaseIo().ExeReader<TestCase>("select * from test_case_t");
+
+            return View(prop);
         }
 
         public ActionResult TestAction(TestProperty prop)
         {
-           //var browerName = ConfigurationManager.AppSettings["BrowserName"];
+            //Validation
+            new tawsValidate().Validate(prop);
+            if (prop.validationMsg.Count != 0)
+            {
+                //データベースからテストケースを取得
+                prop.testCaseList = new DataBaseIo().ExeReader<TestCase>("select * from test_case_t");
+
+                return View("Index", prop);
+            }
+
+            //var browerName = ConfigurationManager.AppSettings["BrowserName"];
             var browerName = prop.testBrowser;
 
             //テスト実施日時取得
