@@ -26,11 +26,11 @@ namespace tawsLibrary
         }
 
         //テストケース保存
-        public string SaveTestCaseFiles(ITestPropertyModelBase prop)
+        public string SaveTestCaseFiles(HttpPostedFileWrapper testCaseFile, string testDateTime)
         {
             if (testCaseFile != null)
             {
-                var uploadFileSaveDir = $@"{ConfigurationManager.AppSettings["UploadFileRootPath"]}\{ prop.testDateTime }";
+                var uploadFileSaveDir = $@"{ConfigurationManager.AppSettings["UploadFileRootPath"]}\{ testDateTime }";
                 var uploadFileSavePath = uploadFileSaveDir + @"\";
 
                 //ディレクトリ作成

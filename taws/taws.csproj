@@ -122,6 +122,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
@@ -157,30 +158,17 @@
     <Compile Include="Validate\tawsValidate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\css\bootstrap-grid.css" />
-    <Content Include="Content\css\bootstrap-grid.min.css" />
-    <Content Include="Content\css\bootstrap-reboot.css" />
-    <Content Include="Content\css\bootstrap-reboot.min.css" />
-    <Content Include="Content\css\bootstrap.css" />
-    <Content Include="Content\css\bootstrap.min.css" />
-    <Content Include="Content\js\bootstrap.bundle.js" />
-    <Content Include="Content\js\bootstrap.bundle.min.js" />
-    <Content Include="Content\js\bootstrap.js" />
-    <Content Include="Content\js\bootstrap.min.js" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Database.config" />
-    <Content Include="Content\css\.DS_Store" />
-    <Content Include="Content\css\bootstrap-grid.css.map" />
-    <Content Include="Content\css\bootstrap-grid.min.css.map" />
-    <Content Include="Content\css\bootstrap-reboot.css.map" />
-    <Content Include="Content\css\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\css\bootstrap.css.map" />
-    <Content Include="Content\css\bootstrap.min.css.map" />
-    <Content Include="Content\js\bootstrap.bundle.js.map" />
-    <Content Include="Content\js\bootstrap.bundle.min.js.map" />
-    <Content Include="Content\js\bootstrap.js.map" />
-    <Content Include="Content\js\bootstrap.min.js.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

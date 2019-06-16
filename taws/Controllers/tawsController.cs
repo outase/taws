@@ -55,7 +55,7 @@ namespace taws.Controllers
             var fileIo = new FileIo();
             prop.evidenceSavePath = fileIo.CreateEvidencesDirectory(prop);
             //テストケースファイル保存
-            prop.uploadFileSavePath = fileIo.SaveTestCaseFiles(prop.testCaseFile, testDateTime);
+            prop.uploadFileSavePath = fileIo.SaveTestCaseFiles(prop.testCaseFile, prop.testDateTime);
 
             //URL設定(configから)
             //var prop.testURL = $"{ConfigurationManager.AppSettings["Url"]}member";
