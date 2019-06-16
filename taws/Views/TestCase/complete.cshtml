@@ -1,0 +1,15 @@
+﻿
+<h2>インサート結果</h2>
+
+<p class="menu-padding-top-bottom-01">@Model.resultMsg</p>
+
+<p class="menu-padding-bottom-01"><a href="../TestCase/Insert">テストケースインサート画面に戻る</a></p>
+<p class="menu-padding-bottom-01"><a href="../taws/Index">テストメニューに戻る</a></p>
+
+@{ if (Model.resultErrorMsg != null)
+    {
+        <h3>ERROR</h3>
+        <p class="menu-padding-top-bottom-01">@Model.resultErrorMsg</p>
+    }
+}
+

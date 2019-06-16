@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using taws.Models;
 using tawsCommons.mvc;
 
 namespace taws.Models
@@ -21,6 +22,11 @@ namespace taws.Models
         public string testUserAgent { get; set; }
         public bool screenCloseFlg { get; set; }
         public HttpPostedFileWrapper testCaseFile { get; set; }
+
+        //テストケースの一覧表示
+        public List<TestCase> testCaseList { get; set; }
+
+        public string selectTestCaseNo { get; set; }
 
         //テスト実施日時
         public string testDateTime { get; set; }
@@ -43,5 +49,8 @@ namespace taws.Models
         //テスト結果
         public string resultMsg { get; set; }
         public string resultErrorMsg { get; set; }
+
+        //Validation error メッセージ
+        public List<string> validationMsg { get; set; } = new List<string>();
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
+using Dapper;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,12 +11,17 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Transactions;
 using Npgsql;
+using tawsCommons.mvc;
+using tawsLibrary.mvc;
 
 namespace tawsLibrary
 {
-    class DataBaseIo
+    public class DataBaseIo
     {
-        //別サーバーにDBがあるときは、COPYコマンドでEXPORTできないので、localhostのみ利用可能
+        /// <summary>
+        /// CSV出力用
+        /// ※別サーバーにDBがあるときは、COPYコマンドでEXPORTできないので、ExportCsv2を利用のこと
+        /// </summary>
         public void ExportCsv(string savePath, string fileName, string exportSql)
         {
             var csvPath = savePath + fileName + ".csv";
@@ -37,13 +44,17 @@ namespace tawsLibrary
             }
         }
 
-        //別サーバーにDBがあってもEXPORT可能
+        ///<summary>
+        ///CSV出力用
+        ///別サーバーにDBがあってもEXPORT可能
+        ///※ただし、テーブル結合の場合のタイトル出力には未対応
+        ///</summary>
         public void ExportCsv2(string savePath, string fileName, string exportSql, string exportTable = null)
         {
             var csvPath = savePath + fileName + ".csv";
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
 
-            string csvTitle = null;
+            string csvTitle = "";
             string exportTitle = $@"SELECT column_name FROM information_schema.columns WHERE table_name = '{ exportTable }' ORDER BY ordinal_position;";
 
             //出力前にスリープ
@@ -110,11 +121,37 @@ namespace tawsLibrary
             }
         }
 
-        public string ExecutSQL(string savePath, string fileName, string executSql)
+        /// <summary>
+        /// 単一のクエリの実行
+        /// </summary>
+        /// <param name="conn">new 'Sql or Npgsql or MySql etc'Connection(connectionString)</param>
+        /// <param name="comm">new 'Sql or Npgsql or MySql etc'Command(query, conn);</param>
+        /// <remarks>IDbConnectionを継承したオブジェクトと、IDbCommandを継承したオブジェクトを受取り処理を実行する</remarks>
+        /// <returns></returns>
+        public int ExeDml<Conn, Comm>(Conn conn, Comm comm) where Conn : IDbConnection where Comm : IDbCommand
         {
+            int result = 0;
 
-            var csvPath = savePath + fileName + ".csv";
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (conn)
+                {
+                    conn.Open();
+                    result = comm.ExecuteNonQuery();
+                    conn.Close();
+                }
+                ts.Complete();
+            }
+            return result;
+        }
 
+        /// <summary>
+        /// 単一のクエリの実行
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public int ExeDml(string query)
+        {
             var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             int result = 0;
 
@@ -123,16 +160,168 @@ namespace tawsLibrary
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    NpgsqlCommand command = new NpgsqlCommand(executSql, conn);
-                    //SQLの実行と実行結果の格納
-                    result = command.ExecuteNonQuery();
+                    NpgsqlCommand comm = new NpgsqlCommand(query, conn);
+                    result = comm.ExecuteNonQuery();
+                    conn.Close();
+                }
+                ts.Complete();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 売上伝票ヘッダと明細のようにセットで同一トランザクション内で実行する場合に利用
+        /// </summary>
+        /// <param name="queryHeader"></param>
+        /// <param name="queryDetail"></param>
+        /// <returns></returns>
+        public int[] ExeDml2(string queryHeader, string queryDetail)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int[] result = new int[2] {0, 0};
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    NpgsqlCommand comm = new NpgsqlCommand(queryHeader, conn);
+                    result[0] = comm.ExecuteNonQuery();
+
+                    NpgsqlCommand comm2 = new NpgsqlCommand(queryDetail, conn);
+                    result[1] = comm2.ExecuteNonQuery();
+
                     conn.Close();
                 }
 
+                //どちらかが更新が０件の場合は失敗とみなしてコンプリートさせない
+                if(result[0] > 0 && result[0] > 0)
+                {
+                    ts.Complete();
+                }
+            }
+            return result;
+        }
+
+
+        ///<summary>
+        ///複数のクエリを同一トランザクション内で処理したい場合に利用(用途に合わせてロールバックさせる処理の追加が必要）
+        ///</summary>
+        public virtual List<int> ExeDml3(string[] query)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            var result = new List<int>();
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+                    foreach(string s in query)
+                    {
+                        NpgsqlCommand comm = new NpgsqlCommand(s, conn);
+                        result.Add(comm.ExecuteNonQuery());
+                    }
+                    conn.Close();
+                }
                 ts.Complete();
             }
+            return result;
+        }
 
-            return Convert.ToString(result) + "件";
+        /// <summary>
+        /// 読み取り用クエリ実行（カウント用）
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public List<T> ExeReader<T>(string query) where T : class
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            var resutList = new List<T>();
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    //Use Dapper
+                    var list = conn.Query<T>(query);
+
+                    foreach (dynamic item in list)
+                    {
+                        resutList.Add(item);
+                    }
+
+                    conn.Close();
+                }
+            }
+            return resutList;
+        }
+
+        /// <summary>
+        /// 読み取り用クエリ実行（カウント用）
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public int ExeRecodeCount(string query)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            int result = 0;
+
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    //try DataAdpter
+                    var comm = new NpgsqlCommand(query, conn);
+                    using (var da = new NpgsqlDataAdapter(comm))
+                    {
+                        var dt = new DataTable();
+                        da.Fill(dt);
+
+                        //レコード件数取得
+                        result = dt.Rows.Count;
+
+                        ////レコード取得できる
+                        //var i = 0;
+                        //DataRow[] list = new DataRow[dt.Rows.Count];
+                        //foreach (DataRow row in dt.Rows)
+                        //{
+                        //    list[i] = row;
+                        //    i++;
+
+                        //    ////レコード内の１つ１つの要素を取得できる
+                        //    //var j = 0;
+                        //    //foreach(var item in row.ItemArray)
+                        //    //{
+                        //    //    //Listにitemを格納する
+                        //    //    j++;
+                        //    //}
+                        //}
+                    }
+
+                    conn.Close();
+                }
+            }
+            return result;
+        }
+
+        public List<Dictionary<string, string>> TestCaseFromDB(string testCaseNo)
+        {
+            var testElemList = new List<Dictionary<string, string>>();
+            List<TestCaseDetailModel> testCaseDetailList = new DataBaseIo().ExeReader<TestCaseDetailModel>($@"select * from test_case_detail_t where test_case_no = '{ testCaseNo }'");
+
+            foreach (var list in testCaseDetailList)
+            {
+                //テストケースを格納する
+                testElemList.Add(new Dictionary<string, string>() { { FileIo.ELEM_NO, $"{ list.elem_no }" }, { FileIo.ELEM_NAME, $"{ list.elem_name }" }, { FileIo.SEND_KEY, $"{ list.sendkey }" }, { FileIo.SLEEP_TIME, $"{ list.sleep_time }" } });
+            }
+
+            return testElemList;
         }
     }
 }

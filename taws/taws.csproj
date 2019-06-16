@@ -145,11 +145,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\tawsController.cs" />
+    <Compile Include="Controllers\TestCaseController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\TestCase.cs" />
+    <Compile Include="Models\TestCaseDetail.cs" />
+    <Compile Include="Models\TestCaseProperty.cs" />
     <Compile Include="Models\TestProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validate\tawsValidate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\bootstrap-grid.css" />
@@ -163,10 +168,7 @@
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Database.config" />
     <Content Include="Content\css\.DS_Store" />
     <Content Include="Content\css\bootstrap-grid.css.map" />
@@ -205,15 +207,14 @@
     <Content Include="Views\taws\complete.cshtml" />
     <Content Include="Views\taws\Index.cshtml" />
     <Content Include="Settings.config" />
+    <Content Include="Views\TestCase\Insert.cshtml" />
+    <Content Include="Views\TestCase\complete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Partial\TestCase\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />

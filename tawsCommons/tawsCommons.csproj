@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="mvc\ITestCaseDatailModelBase.cs" />
+    <Compile Include="mvc\ITestCaseModelBase.cs" />
+    <Compile Include="mvc\ITestCasePropertyModelBase.cs" />
     <Compile Include="mvc\ITestPropertyModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

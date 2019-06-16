@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace tawsCommons.mvc
         bool screenCloseFlg { get; set; }
         HttpPostedFileWrapper testCaseFile { get; set; }
 
+        string selectTestCaseNo { get; set; }
+
         //テスト実施日時
         string testDateTime { get; set; }
 
@@ -44,5 +47,8 @@ namespace tawsCommons.mvc
         //テスト結果
         string resultMsg { get; set; }
         string resultErrorMsg { get; set; }
+
+        //Validation error メッセージ
+        List<string> validationMsg { get; set; }
     }
 }

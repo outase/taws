@@ -1,87 +1,87 @@
-�e�X�g�P�[�X�pCSV�̍쐬�}�j���A��
+テストケース用CSVの作成マニュアル
 
 -----------------------------------------------------------------------
-�y1�zCSV���ځi�^�C�g���j
------------------------------------------------------------------------
-
----
-"elemNo", "elemName", "sendKey", "sleep"
----
-
-elemNo�F
-�e�X�g�G�������g�i���o�[�ł��B�y2�z���Q�l�Ƀi���o�[��ݒ肷��B
-
-elemName�F
-html�v�f��id��Name���w�肷��B
-
-sendKey�F
-�e�L�X�g�{�b�N�X��ASelect�ȂǓ��͂�����e��I��������e���w�肷��B
-
-sleep�F
-�v�f�����s����O�̑҂����Ԃ��w�肷��B��ʂ̓ǂݍ��ݒ��ɐ�ɗv�f�����s���ꂽ��A��ʓW�J�O�ɃX�N���[���V���b�g���Ƃ���ȂǁA���܂������Ȃ��ꍇ�ɐݒ肷��ƗL���B
-�擾��D2�b��҂ꍇ�́A2000�Ɛݒ�
-
-
------------------------------------------------------------------------
-�y2�z�e�X�g�G�������g�i���o�[�̎��
+【1】CSV項目（タイトル）
 -----------------------------------------------------------------------
 
 ---
-getScreen = 1,	//�X�N���[���V���b�g�擾
+"elem_no", "elem_name", "send_key", "sleep_time"
 ---
-//�G�������g��sendkey����
-Id_SendKey 					= 101,	//�iid�w��j��Ƀe�L�X�g�{�b�N�X�Ȃ�
-Id_SendKeyForSelectEtc 		= 102,	//�iid�w��j��ɃZ���N�g�{�b�N�X�Ȃ�
-Name_SendKey 				= 103, 	//�iName�w��j��Ƀe�L�X�g�{�b�N�X�Ȃ�
-Name_SendKeyForSelectEtc 	= 104, 	//�iName�w��j��ɃZ���N�g�{�b�N�X�Ȃ�
----
-//�G�������g���N���b�N����
-Id_Click 		= 201,	//�iid�w��j
-Name_Click 		= 202,	//�iName�w��j
-ClassName_Click = 203,	//�iClassName�w��j
-XPath_Click 	= 204,	//�iXPath�w��j
-LinkText_Click 	= 205,	//�iLinkText�w��j
----
-Execute_Script 	= 301,	//JavaScript���s
-Export_Csv 		= 401,	//DataBase����CSV�o��
+
+elem_no：
+テストエレメントナンバーです。【2】を参考にナンバーを設定する。
+
+elem_name：
+html要素のidやNameを指定する。
+
+send_key：
+テキストボックスや、Selectなど入力する内容や選択する内容を指定する。
+
+sleep_time：
+要素を実行する前の待ち時間を指定する。画面の読み込み中に先に要素が実行されたり、画面展開前にスクリーンショットがとられるなど、うまくいかない場合に設定すると有効。
+取得例．2秒を待つ場合は、2000と設定
 
 
 -----------------------------------------------------------------------
-�y3�zCSV�ݒ���@
+【2】テストエレメントナンバーの種類
 -----------------------------------------------------------------------
 
-��elemNo:1�A�X�N���[���V���b�g�����ꍇ
-"1", "", "", "" //elemNo�̂ݐݒ�
+---
+getScreen = 1,	//スクリーンショット取得
+---
+//エレメントにsend_keyする
+Id_send_key 					= 101,	//（id指定）主にテキストボックスなど
+Id_send_keyForSelectEtc 		= 102,	//（id指定）主にセレクトボックスなど
+Name_send_key 				= 103, 	//（Name指定）主にテキストボックスなど
+Name_send_keyForSelectEtc 	= 104, 	//（Name指定）主にセレクトボックスなど
+---
+//エレメントをクリックする
+Id_Click 		= 201,	//（id指定）
+Name_Click 		= 202,	//（Name指定）
+ClassName_Click = 203,	//（ClassName指定）
+XPath_Click 	= 204,	//（XPath指定）
+LinkText_Click 	= 205,	//（LinkText指定）
+---
+Execute_Script 	= 301,	//JavaScript実行
+Export_Csv 		= 401,	//DataBaseからCSV出力
 
-��elemNo:101�`104�A���͂���ꍇ
+
+-----------------------------------------------------------------------
+【3】CSV設定方法
+-----------------------------------------------------------------------
+
+■elem_no:1、スクリーンショットを取る場合
+"1", "", "", "" //elem_noのみ設定
+
+■elem_no:101～104、入力する場合
 "101", "email", "test@mail.com", "" 
 
-��elemNo:201�`205�A�{�^���⃊���N���N���b�N����ꍇ
-"203", "button2", "", "" //elemNo���w�肵�āAelemName�Ƀ{�^�����⃊���N�e�L�X�g����́AsendKey�͐ݒ肵�Ȃ�
+■elem_no:201～205、ボタンやリンクをクリックする場合
+"203", "button2", "", "" //elem_noを指定して、elem_nameにボタン名やリンクテキストを入力、send_keyは設定しない
 
-��elmNo:301�AJavascript�ŉ�ʗv�f�𑀍삷��ꍇ
-"301", "document.getElementById('button1').click();", "", "" //elemNo���w�肵�āAelemName��javascript����́AsendKey�͐ݒ肵�Ȃ�
+■elmNo:301、Javascriptで画面要素を操作する場合
+"301", "document.getElementById('button1').click();", "", "" //elem_noを指定して、elem_nameにjavascriptを入力、send_keyは設定しない
 
-��elmNo:401�ADataBase����CSV���G�N�X�|�[�g����ꍇ
-"401", "select * from user", "user", "" //elemNo���w�肵�āAelemName��SQL�AsendKey�̓e�[�u������ݒ�B��sendKey�͊J�����B���i�K�ł͐ݒ肵���e�[�u�����̃J�������^�C�g���Ƃ��ďo�͂��܂��B�󔒂ɂ���ƃ^�C�g���͏o�͂���܂���B�e�[�u���̌����Ȃǂɂ͑Ή����ł��B
+■elmNo:401、DataBaseからCSVをエクスポートする場合
+"401", "select * from user", "user", "" //elem_noを指定して、elem_nameにSQL、send_keyはテーブル名を設定。※send_keyは開発中。現段階では設定したテーブル名のカラムをタイトルとして出力します。空白にするとタイトルは出力されません。テーブルの結合などには対応中です。
 
-��sleep�̐ݒ�
+■sleep_timeの設定
 "301", "document.getElementById('button1').click();", "", ""
 "101", "email", "test@mail.com", "2000"
 
-�{�^��������ɉ�ʂ̓ǂݍ��ݎ���2000�҂��Ă���Aemail����͂�����B
+ボタン押下後に画面の読み込み時間2000待ってから、emailを入力させる。
 
 -----------------------------------------------------------------------
-�y4�zCSV��
+【4】CSV例
 -----------------------------------------------------------------------
 
-"elemNo", "elemName", "sendKey", "sleep"
+"elem_no", "elem_name", "send_key", "sleep_time"
 "1", "", "", ""
 "301", "document.getElementById('button1').click();", "", ""
 "101", "email", "test@mail.com", "2000"
 "101", "password1", "pass01", ""
-"102", "ques", "��e�̋����́H", ""
-"101", "ans", "�Ă���", ""
+"102", "ques", "母親の旧姓は？", ""
+"101", "ans", "てすと", ""
 "203", "button2", "", ""
 
-csv��""��''�ł̈͂��ɑΉ����Ă��܂��B
+csvは""か''での囲いに対応しています。
