@@ -1,0 +1,110 @@
+// Typography
+$font-family-base: "游ゴシック Medium", "Yu Gothic Medium", 游ゴシック体, YuGothic, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, sans-serif;
+$fa: "Font Awesome 5 Free";
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 600;
+$line-height-base: 1.8;
+$line-height-sm: 1.5;
+$line-height-xs: 1.2;
+$line-height-none: 1.1;
+$h1-font-size: 2.25rem;
+$h2-font-size: 2rem;
+$h3-font-size: 1.625rem;
+$h4-font-size: 1.375rem;
+$h5-font-size: 1.25rem;
+$h6-font-size: 1.125rem;
+
+// Heading styles
+@import "https://fonts.googleapis.com/css?family=Noto+Serif+JP:500,600&amp;subset=japanese";
+$headings-font-family: "Noto Serif JP", serif;
+$headings-font-weight: $font-weight-bold;
+$headings-line-height: $line-height-xs;
+$headings-margin-bottom: 1.25rem;
+
+// Grid
+$grid-columns: 12;
+$grid-gutter-width: 2rem;
+
+// Colors
+$black: rgb(18,19,20);
+$grays: (
+  dark: lighten($black,16%),
+  base: lighten($black,32%),
+  light: lighten($black,48%),
+  lighter: lighten($black,64%),
+  lightest: lighten($black,80%),
+  ghost: lighten($black,90%)
+);
+@function grays($key) {
+  @return map-get($grays,$key);
+}
+
+$colors: (
+  brand: #522f60, // 葡萄色：rgb(82,47,96)
+  blue: #57b,
+  indigo: #6610f2,
+  purple: #6f42c1,
+  pink: #e83e8c,
+  red: #dc3545,
+  orange: #fd7e14,
+  yellow: #ffc107,
+  green: #28a745,
+  teal: #20c997,
+  cyan: #17a2b8,
+  gray: grays(base),
+  gray-dark: grays(dark),
+  twitter: #1da1f2,
+  facebook: #3b5998,
+  instagram: #e4405f,
+  youtube: #ff0e00,
+  pocket: #ef4056,
+  pinterest: #bd081c,
+  tumblr: #35465c,
+  google: #4285f4,
+  feedly: #1db85d,
+  github: #181E25,
+  gitlab: #e24329,
+  linkedin: #0c74b4
+);
+@function colors($key) {
+  @return map-get($colors,$key);
+}
+
+$theme-colors: (
+  primary: colors(brand),
+  secondary: grays(dark),
+  success: colors(green),
+  info: colors(cyan),
+  warning: colors(yellow),
+  danger: colors(red),
+  light: grays(lightest),
+  dark: grays(dark)
+);
+
+// Options
+$sizes: ();
+$sizes: map-merge((
+  25: 25%,
+  33: 33.333%,
+  50: 50%,
+  66: 66.666%,
+  75: 75%,
+  100: 100%,
+  auto: auto
+), $sizes);
+
+$custom-select-padding-y: .5rem;
+$enable-rounded: false;
+$enable-shadows: true;
+$headings-color: grays(base);
+$link-color: colors(blue);
+$link-hover-color: darken($link-color,20%);
+$link-hover-decoration: none;
+
+$btn-line-height: $line-height-xs;
+$input-line-height: $line-height-xs;
+
+$btn-transition: all .15s ease-in-out;
+$transition-base: $btn-transition;
+$transition-slow: all .3s ease-in-out;

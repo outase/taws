@@ -1,0 +1,10 @@
+#content {
+  section {
+    margin-bottom: 3rem;
+    p {
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
