@@ -231,7 +231,7 @@ namespace tawsLibrary
         }
 
         /// <summary>
-        /// 読み取り用クエリ実行（カウント用）
+        /// 読み取り用クエリ実行
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
