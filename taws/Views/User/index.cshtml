@@ -1,0 +1,23 @@
+﻿<h1>メンバーコントロール</h1>
+
+<form id="userTableAction" action="../User/Action" method="post" enctype="multipart/form-data">
+    <div class="menu-padding-top-bottom-03">
+        <table class="menu-padding-bottom-02" cellpadding="10">
+            <tr>
+                <td>Actionの選択</td>
+                <td>
+                    <select id="selectAction" name="selectAction" form="userTableAction" onchange="EntryChange()">
+                        <option value="select">Select</option>
+                        <option value="insert">Insert</option>
+                        <option value="update">Update</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="ユーザーテーブルのアクション"></td>
+            </tr>
+        </table>
+    </div>
+</form>
