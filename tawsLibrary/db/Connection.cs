@@ -52,8 +52,8 @@ namespace tawsLibrary.db
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="defaultSchema">接続先スキーマ。</param>
-        public Connection(string defaultSchema) : base(GetConnecting(), true)
+        /// <param name="defaultSchema">接続先スキーマ</param>
+        public Connection(string defaultSchema = "") : base(GetConnecting(), true)
         {
             DefaultSchema = defaultSchema;
         }
