@@ -1,0 +1,23 @@
+#site-footer {
+  background: grays(ghost);
+  padding: 1rem 0;
+  .container {
+    text-align: center;
+  }
+}
+
+.page-top {
+  line-height: $line-height-none;
+  position: fixed;
+  bottom: 0;
+  right: .25rem;
+  z-index: 9998;
+  a {
+    display: inline-block;
+    background: rgba($black,.8);
+    color: white;
+    text-decoration: none;
+    padding: .5rem .75rem;
+    transition: $transition-base;
+  }
+}

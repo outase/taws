@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Gulp4 for Scss, Babel and BrowserSync</title>
+  <meta name="description" content="">
+  <meta property="og:image" content="img/ogp.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" href="img/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="img/favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="icon" href="img/favicon.ico">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<!--
+                  _                            _
+                 | |                          | |
+  _ __     __ _  | |_   _   _   _ __    __ _  | |   ___     __ _   _   _
+ | '_ \   / _` | | __| | | | | | '__|  / _` | | |  / _ \   / _` | | | | |
+ | | | | | (_| | | |_  | |_| | | |    | (_| | | | | (_) | | (_| | | |_| |
+ |_| |_|  \__,_|  \__|  \__,_| |_|     \__,_| |_|  \___/   \__, |  \__, |
+                                                            __/ |   __/ |
+                                                           |___/   |___/
+-->
+
+<body>
+
+  <header id="site-header" role="banner">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="#"><img src="img/logo.svg" alt="site_logo" title="site_title"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsible" aria-controls="collapsible" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsible">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">current_page</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">page_link</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              dropdown_menu
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">dropdown_menu_item</a>
+              <a class="dropdown-item" href="#">dropdown_menu_item</a>
+              <a class="dropdown-item" href="#">dropdown_menu_item</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <div id="page">
+
+    <main id="content" class="container" role="main">
+
+      <section>
+        <div class="alert alert-info mb-5" role="alert">
+          <i class="fas fa-info-circle"></i> <strong>Heads up!</strong><br>
+          As you see, this boilerplate is optimized for Japanese contents.<br>
+          For other languages, modify <code>lang</code> in this html and <code>font-family</code> in _variables.scss.<br>
+          Super easy!
+        </div>
+        <h1 class="section-heading">夏の夜の話</h1>
+        <p class="lead">中原中也</p>
+        <p>夏も半ばを過ぎてゐた。此処は銀座の裏通りのカフェー、卓子の上で扇風器は、哀しげな唸りをつづけてゐる。<br>
+        三田村は私の前でさかんに飲んでゐる。その兎のやうな眼を赤くして、折々キヨロキヨロあたりを見廻す。女給達は、今来たばかりの常連らしいひどく冗談口を叩く男のまはりにみんな行つてしまつた。スタンドにゐるお内儀さんは、時々怪訝さうな眼付をその方にやつてゐる。<br>
+        先刻まで頻りに喋舌つてゐた三田村はスツカリ黙つてゐる。私は胃酸が込み上げて来さうで仕方がない。前の舗道を過ぎるヒキズルやうな足音が嫌な気がする。<br>
+        「いいかオイ……」と突然三田村はその重さうな頭をハネ上げて続きを始めるのだつた、「俺がついててやるから安心しいろい」<br>
+        「うん、うん」と私は相変らず吊り込まれて承知するのだつた。<br>
+        「いいかオイ……あんな奴と共同で仕事をして好いことがないのは分りきつてらあ……いいかオイ、俺が出来るだけは助けてやるからなあオイ」<br>
+        「うんうん」<br>
+        それから猶暫らく彼は同じやうなことを繰返してゐたが、やがて其処を出ようと云ひだした。そしてまた何処か他の所で飲まうといふのだ。――私も従ふことになつた。<br>
+        外もあんまり涼しくはなかつた、家の中よりか涼しいくらゐであつた。路次角の電柱に懸かつた医者の広告板なのだが、その姓をどう読んでいいか分らなかつた、そのまはりに蛾が沢山、それを照明してゐる電燈のまはりにも、とまつたり飛んだりしてゐる。三田村は私より五六歩先を肩をイカらせて歩いていく。私は疲れてガツカリしながら従いて行つた。</p>
+        <p>私は彼を信用したわけではないが、といつて彼を悪い奴だといふのではない。信用しないのに何もかも彼の云ひなりに返事をしたといふのも変なものだが、尤もあんなに三田村が感激してゐる時には……どうも困る。返事をしないとしたらあの男はひどく残念がるのだし、しまひには腹をたてる。腹をたてるのは勝手だとしても、彼に腹を立てられると方々で事が面倒になるのだ。<br>
+        それに私だつて今度の事は彼に従はないでもないのだ。多くの場合彼の話は話に終るのだが、偶には美事にやりおほせることがある。今度の事はその美事にやれさうな方の事のやうに思へるのだ。<br>
+        だから私もも少し具体的に話してみようとしたのだが、彼は「いいかオイ」といつた調子でまるで私の気持にはお構ひないのだ。で、なんのことはなしに承諾したやうな返事をしはしたのだが……<br>
+        彼と別れたあと私はいやな気持だつた。</p>
+        <p>三田村と飲んだ晩から今日で五日目になる。別れる時その話のことで「明日かあさつては是非訪ねるから」と三田村自身云つたのだが未だに来ない。私の方は急を要する場合だし何時まで待つてもゐられないから、三田村の「あんな奴と共同で云々」のそのあんな奴に、私は私の最初の計画通り相談することに肚をきめる。あんな奴とならさう美事にいかないまでも全然まづくなりつこはないのだ。あんな奴はさういつた男だ。――明日相談に出かけるとして今晩は一人で飲んで来よう。<br>
+        さう思つて私は家を出た。<br>
+        往来の片側の店にはみんな夕陽が射し込んでゐる。日蔭になつてる方の側ではもう椽台を出してゐる家がある。その一つに繻絆一枚で腰掛けて老人の読んでゐた新聞に、三十何年とか撒水車を挽いてゐるといふ男の笑つて汗を拭いてゐる写真が通りがかりに見えた。今朝私は寝床の中で、夏らしく黒く撮れたその写真をみたのだつた。</p>
+        <p>二三丁行くと私の名前をひどく嬉しさうに呼ぶ奴がある、見るとそれは三田村なのだ。と少し後れてあんな奴もゐる。<br>
+        「どうしたい、オイ……」と三田村は近づくなり私の肩に手をかけた。<br>
+        「どうもしないよ」と私は云つた。<br>
+        「まあさう怒るなよツ」といつて彼は大声で笑ふのだつた。<br>
+        「なあんだ」と私は思つてゐた。けれども彼はつづけて大声で笑つてゐる。<br>
+        「暫くでした」とあんな奴が三田村の肩越しに挨拶した。<br>
+        「お宅へ上るところでした。――実は今日三田村さんからお話を聞きまして、とも角それでは御相談に上らうと存じまして……」云ひながら彼は扇子をパチリパチリさせてゐた。<br>
+        「うんそれだよ、それで俺も一緒に君ン所へ行かうつて所なんだ」と傍から三田村は、その躁いだ顔の中に兎のやうな眼を光らせて、高い声で云ふのだつた。<br>
+        「お差支へなければ、ぢや、お宅へ参りませう」とあんな奴が促した。三人はゾロゾロ私の家の方へ歩きだした。<br>
+        「僕ァね、こなひだン所で昨日またうんと飲んぢやつたよ」またしても三田村は大きい声で笑ふのだつた。</p>
+      </section>
+
+      <section>
+        <h1 class="section-heading">星めぐりの歌</h1>
+        <p class="lead">宮澤賢治</p>
+        <p>あかいめだまの　さそり<br>
+        ひろげた鷲の　　つばさ<br>
+        あをいめだまの　小いぬ、<br>
+        ひかりのへびの　とぐろ。</p>
+        <p>オリオンは高く　うたひ<br>
+        つゆとしもとを　おとす、<br>
+        アンドロメダの　くもは<br>
+        さかなのくちの　かたち。</p>
+        <p>大ぐまのあしを　きたに<br>
+        五つのばした　　ところ。<br>
+        小熊のひたいの　うへは<br>
+        そらのめぐりの　めあて。</p>
+      </section>
+
+    </main>
+
+  </div>
+
+  <footer id="site-footer" role="contentinfo">
+    <div class="container">
+      <small>&copy; <time><script>document.write(new Date().getFullYear());</script></time> site_title</small>
+    </div>
+    <div class="page-top"><a href="#"><i class="fas fa-arrow-up"></i></a></div>
+  </footer>
+
+  <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/bootstrap/dist/js/bootstrap.bundle.min"></script>
+  <script src="js/main.min.js"></script>
+
+</body>
+
+</html>

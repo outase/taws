@@ -1,0 +1,35 @@
+#site-header {
+  background: grays(ghost);
+  .navbar-brand {
+    img {
+      height: 40px;
+    }
+  }
+  .navbar-nav {
+    >.nav-item {
+      .nav-link {
+        padding: .75rem 1rem;
+        transition: $transition-base;
+        &:hover {
+          background: grays(lightest);
+        }
+      }
+    }
+  }
+  .dropdown {
+    >.dropdown-menu {
+      top: calc(100% - .2rem);
+      padding: 0;
+      .dropdown-item {
+        padding: .75rem 1.5rem;
+      }
+    }
+    &:hover {
+      >.dropdown-menu {
+        @include media-breakpoint-up(lg) {
+          display: block;
+        }
+      }
+    }
+  }
+}
