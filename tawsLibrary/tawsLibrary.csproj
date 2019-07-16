@@ -72,6 +72,8 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -92,7 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBaseIo.cs" />
+    <Compile Include="db\crud.cs" />
     <Compile Include="db\Connection.cs" />
+    <Compile Include="db\edm_user_t.cs" />
     <Compile Include="db\table\db_base_t .cs" />
     <Compile Include="EnumTestElem.cs" />
     <Compile Include="FileIo.cs" />

@@ -12,7 +12,11 @@ namespace tawsLibrary.db
         {
             var dbc = new Connection();
 
-
+            //Select
+            {
+                var allData = dbc.Table.ToList();
+                var filterData = dbc.Table.Where(w => w.ToString() == "").ToList();
+            }
         }
     }
 }
